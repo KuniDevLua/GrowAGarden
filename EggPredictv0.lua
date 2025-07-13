@@ -69,76 +69,64 @@ local function randomizeEggs(forceRare)
     end
 end
 
--- 🌀 LOADING SCREEN
+-- 🌀 LOADING SCREEN FIRST
 local loadingGui = Instance.new("ScreenGui", PlayerGui)
 loadingGui.Name = "LoadingScreen"
 loadingGui.IgnoreGuiInset = true
+loadingGui.ResetOnSpawn = false
 
-local bgFrame = Instance.new("Frame", loadingGui)
-bgFrame.Size = UDim2.new(1, 0, 1, 0)
-bgFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+local bg = Instance.new("Frame", loadingGui)
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 
-local loadingFrame = Instance.new("Frame", bgFrame)
-loadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-loadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-loadingFrame.Size = UDim2.new(0, 250, 0, 100)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-loadingFrame.BorderSizePixel = 0
-loadingFrame.ClipsDescendants = true
-Instance.new("UICorner", loadingFrame).CornerRadius = UDim.new(0, 12)
+local loadBox = Instance.new("Frame", bg)
+loadBox.Size = UDim2.new(0, 240, 0, 90)
+loadBox.Position = UDim2.new(0.5, -120, 0.5, -45)
+loadBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Instance.new("UICorner", loadBox).CornerRadius = UDim.new(0, 12)
 
-local titleLabel = Instance.new("TextLabel", loadingFrame)
-titleLabel.Size = UDim2.new(1, 0, 0.4, 0)
-titleLabel.Position = UDim2.new(0, 0, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Kuni Hub"
-titleLabel.Font = Enum.Font.FredokaOne
-titleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-titleLabel.TextScaled = true
+local title = Instance.new("TextLabel", loadBox)
+title.Size = UDim2.new(1, 0, 0.4, 0)
+title.Text = "Kuni Hub"
+title.Font = Enum.Font.FredokaOne
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.BackgroundTransparency = 1
+title.TextScaled = true
 
-local loadingText = Instance.new("TextLabel", loadingFrame)
-loadingText.Size = UDim2.new(1, 0, 0.3, 0)
-loadingText.Position = UDim2.new(0, 0, 0.4, 0)
-loadingText.BackgroundTransparency = 1
-loadingText.Text = "Loading"
-loadingText.Font = Enum.Font.FredokaOne
-loadingText.TextColor3 = Color3.fromRGB(255, 215, 0)
-loadingText.TextScaled = true
+local text = Instance.new("TextLabel", loadBox)
+text.Size = UDim2.new(1, 0, 0.3, 0)
+text.Position = UDim2.new(0, 0, 0.4, 0)
+text.Text = "Loading"
+text.Font = Enum.Font.FredokaOne
+text.TextColor3 = Color3.fromRGB(255, 215, 0)
+text.BackgroundTransparency = 1
+text.TextScaled = true
 
-local barBG = Instance.new("Frame", loadingFrame)
-barBG.Size = UDim2.new(1, -20, 0, 10)
-barBG.Position = UDim2.new(0, 10, 1, -20)
+local barBG = Instance.new("Frame", loadBox)
+barBG.Size = UDim2.new(0.9, 0, 0, 8)
+barBG.Position = UDim2.new(0.05, 0, 1, -16)
 barBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-barBG.BorderSizePixel = 0
 
 local bar = Instance.new("Frame", barBG)
 bar.Size = UDim2.new(0, 0, 1, 0)
 bar.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
-bar.BorderSizePixel = 0
 
 task.spawn(function()
     for i = 1, 30 do
-        local percent = i / 30
-        TweenService:Create(bar, TweenInfo.new(0.3, Enum.EasingStyle.Linear), {
-            Size = UDim2.new(percent, 0, 1, 0)
-        }):Play()
-        loadingText.Text = "Loading" .. string.rep(".", i % 4)
+        local p = i / 30
+        TweenService:Create(bar, TweenInfo.new(0.3), {Size = UDim2.new(p, 0, 1, 0)}):Play()
+        text.Text = "Loading" .. string.rep(".", i % 4)
         task.wait(10/30)
     end
 end)
 
 task.wait(10.2)
-TweenService:Create(loadingFrame, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-TweenService:Create(titleLabel, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
-TweenService:Create(loadingText, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
-TweenService:Create(barBG, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-TweenService:Create(bar, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-task.wait(0.7)
 loadingGui:Destroy()
 
--- GUI
+-- 🌟 MAIN GUI
 local gui = Instance.new("ScreenGui", PlayerGui)
 gui.Name = "KuniVIPGUI"
+gui.ResetOnSpawn = false
 
 local frame = Instance.new("Frame", gui)
 frame.Size = UDim2.new(0, 250, 0, 150)
@@ -149,7 +137,6 @@ frame.Active = true
 frame.Draggable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- Minimize / Exit Buttons
 local exitBtn = Instance.new("TextButton", frame)
 exitBtn.Text = "✕"
 exitBtn.Size = UDim2.new(0, 30, 0, 30)
@@ -158,28 +145,27 @@ exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
 exitBtn.BackgroundTransparency = 1
 exitBtn.Font = Enum.Font.GothamBold
 exitBtn.TextScaled = true
-
 exitBtn.MouseButton1Click:Connect(function()
     gui:Destroy()
 end)
 
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, -20, 0, 30)
-title.Position = UDim2.new(0, 10, 0, 5)
-title.BackgroundTransparency = 1
-title.Text = "Pet Predictor by Kuni"
-title.TextColor3 = Color3.fromRGB(255, 215, 0)
-title.Font = Enum.Font.FredokaOne
-title.TextScaled = true
+local titleLabel = Instance.new("TextLabel", frame)
+titleLabel.Size = UDim2.new(1, -20, 0, 30)
+titleLabel.Position = UDim2.new(0, 10, 0, 5)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Pet Predictor by Kuni"
+titleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+titleLabel.Font = Enum.Font.FredokaOne
+titleLabel.TextScaled = true
 
-local statusLabel = Instance.new("TextLabel", frame)
-statusLabel.Size = UDim2.new(1, -20, 0, 20)
-statusLabel.Position = UDim2.new(0, 10, 0, 38)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = ""
-statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextScaled = true
+local status = Instance.new("TextLabel", frame)
+status.Size = UDim2.new(1, -20, 0, 20)
+status.Position = UDim2.new(0, 10, 0, 38)
+status.BackgroundTransparency = 1
+status.Text = ""
+status.TextColor3 = Color3.fromRGB(255, 255, 255)
+status.Font = Enum.Font.Gotham
+status.TextScaled = true
 
 local randomBtn = Instance.new("TextButton", frame)
 randomBtn.Size = UDim2.new(0.9, 0, 0, 30)
@@ -201,34 +187,34 @@ autoBtn.Font = Enum.Font.GothamBold
 autoBtn.TextScaled = true
 Instance.new("UICorner", autoBtn).CornerRadius = UDim.new(0, 8)
 
--- Button Logic
+-- 💡 FUNCTIONAL BUTTONS
 local canClick = true
 randomBtn.MouseButton1Click:Connect(function()
     if not canClick then return end
     canClick = false
-    statusLabel.Text = "Randomizing..."
+    status.Text = "Randomizing..."
     randomizeEggs()
     task.wait(2)
-    statusLabel.Text = ""
+    status.Text = ""
     canClick = true
 end)
 
 autoBtn.MouseButton1Click:Connect(function()
     if not canClick then return end
     canClick = false
-    statusLabel.Text = "Searching for rare pet..."
+    status.Text = "Searching for rare pet..."
     local found = false
     local startTime = tick()
 
-    local function checkIfRareFound()
+    local function isRareFound()
         for _, gui in pairs(espList) do
             if gui:IsA("BillboardGui") then
                 local label = gui:FindFirstChildOfClass("TextLabel")
                 local model = gui.Parent
                 if model and eggToPets[model.Name] then
-                    local rarePet = eggToPets[model.Name][#eggToPets[model.Name]]
-                    if label.Text == rarePet then
-                        return true, rarePet
+                    local rare = eggToPets[model.Name][#eggToPets[model.Name]]
+                    if label.Text == rare then
+                        return true, rare
                     end
                 end
             end
@@ -239,10 +225,10 @@ autoBtn.MouseButton1Click:Connect(function()
     task.spawn(function()
         while tick() - startTime < 18 do
             randomizeEggs()
-            local success, pet = checkIfRareFound()
-            if success then
+            local ok, pet = isRareFound()
+            if ok then
                 found = true
-                statusLabel.Text = "✅ Found: " .. pet
+                status.Text = "✅ Found: " .. pet
                 break
             end
             task.wait(2)
@@ -253,16 +239,13 @@ autoBtn.MouseButton1Click:Connect(function()
             local pet
             for _, gui in pairs(espList) do
                 local label = gui:FindFirstChildOfClass("TextLabel")
-                if label then
-                    pet = label.Text
-                    break
-                end
+                if label then pet = label.Text break end
             end
-            statusLabel.Text = "✅ Forced Drop: " .. (pet or "Rare Pet")
+            status.Text = "✅ Forced Drop: " .. (pet or "Rare Pet")
         end
 
         task.wait(3)
-        statusLabel.Text = ""
+        status.Text = ""
         canClick = true
     end)
 end)
