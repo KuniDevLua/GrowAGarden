@@ -1,8 +1,16 @@
+-- ✅ Wait until the game is fully loaded
+repeat task.wait() until game:IsLoaded()
+
+-- ✅ Get necessary services
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local Workspace = game:GetService("Workspace")
+local LocalPlayer = Players.LocalPlayer or Players:GetPlayers()[1]
+repeat task.wait() until LocalPlayer:FindFirstChild("PlayerGui")
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
+-- ✅ Egg-to-pets table (used for ESP and randomizer)
+-- Note: Last pet in each egg list = rarest
 local eggToPets = {
     ["Common Egg"]     = {"Dog", "Golden Lab", "Bunny"},
     ["Uncommon Egg"]   = {"Black Bunny", "Cat", "Chicken", "Deer"},
@@ -15,8 +23,10 @@ local eggToPets = {
     ["Oasis Egg"]      = {"Meerkat", "Sand Snake", "Axolotl", "Hyacinth Macaw"},
 }
 
+-- ✅ Holds all created ESP GUIs
 local espList = {}
 
+-- ✅ Clear previous ESPs
 local function clearESP()
     for _, gui in pairs(espList) do
         if gui and gui.Parent then gui:Destroy() end
@@ -24,6 +34,7 @@ local function clearESP()
     espList = {}
 end
 
+-- ✅ Create ESP label above a BasePart
 local function createESP(part, petName)
     if part and not part:FindFirstChild("EggESP") then
         local gui = Instance.new("BillboardGui", part)
@@ -45,17 +56,17 @@ local function createESP(part, petName)
     end
 end
 
+-- ✅ Get a random pet OR the rarest pet from a given egg
 local function getRandomPet(eggName, forceRare)
     local pool = eggToPets[eggName]
     if pool then
-        if forceRare then
-            return pool[#pool]
-        end
+        if forceRare then return pool[#pool] end
         return pool[math.random(1, #pool)]
     end
     return "Unknown"
 end
 
+-- ✅ Go through all eggs in Workspace and assign predicted pets
 local function randomizeEggs(forceRare)
     clearESP()
     for _, obj in ipairs(Workspace:GetDescendants()) do
@@ -69,40 +80,39 @@ local function randomizeEggs(forceRare)
     end
 end
 
--- 🌀 LOADING SCREEN FIRST
+-- ✅ KUNI LOADING SCREEN (10 seconds with animated bar)
 local loadingGui = Instance.new("ScreenGui", PlayerGui)
-loadingGui.Name = "LoadingScreen"
+loadingGui.Name = "KuniLoading"
 loadingGui.IgnoreGuiInset = true
-loadingGui.ResetOnSpawn = false
 
 local bg = Instance.new("Frame", loadingGui)
 bg.Size = UDim2.new(1, 0, 1, 0)
 bg.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 
-local loadBox = Instance.new("Frame", bg)
-loadBox.Size = UDim2.new(0, 240, 0, 90)
-loadBox.Position = UDim2.new(0.5, -120, 0.5, -45)
-loadBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Instance.new("UICorner", loadBox).CornerRadius = UDim.new(0, 12)
+local box = Instance.new("Frame", bg)
+box.Size = UDim2.new(0, 240, 0, 90)
+box.Position = UDim2.new(0.5, -120, 0.5, -45)
+box.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Instance.new("UICorner", box).CornerRadius = UDim.new(0, 12)
 
-local title = Instance.new("TextLabel", loadBox)
+local title = Instance.new("TextLabel", box)
 title.Size = UDim2.new(1, 0, 0.4, 0)
 title.Text = "Kuni Hub"
-title.Font = Enum.Font.FredokaOne
+title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.fromRGB(255, 215, 0)
 title.BackgroundTransparency = 1
 title.TextScaled = true
 
-local text = Instance.new("TextLabel", loadBox)
-text.Size = UDim2.new(1, 0, 0.3, 0)
-text.Position = UDim2.new(0, 0, 0.4, 0)
-text.Text = "Loading"
-text.Font = Enum.Font.FredokaOne
-text.TextColor3 = Color3.fromRGB(255, 215, 0)
-text.BackgroundTransparency = 1
-text.TextScaled = true
+local status = Instance.new("TextLabel", box)
+status.Size = UDim2.new(1, 0, 0.3, 0)
+status.Position = UDim2.new(0, 0, 0.4, 0)
+status.Text = "Loading"
+status.Font = Enum.Font.GothamBold
+status.TextColor3 = Color3.fromRGB(255, 215, 0)
+status.BackgroundTransparency = 1
+status.TextScaled = true
 
-local barBG = Instance.new("Frame", loadBox)
+local barBG = Instance.new("Frame", box)
 barBG.Size = UDim2.new(0.9, 0, 0, 8)
 barBG.Position = UDim2.new(0.05, 0, 1, -16)
 barBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -111,25 +121,25 @@ local bar = Instance.new("Frame", barBG)
 bar.Size = UDim2.new(0, 0, 1, 0)
 bar.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
 
+-- ✅ Animate the progress bar and loading text
 task.spawn(function()
     for i = 1, 30 do
-        local p = i / 30
-        TweenService:Create(bar, TweenInfo.new(0.3), {Size = UDim2.new(p, 0, 1, 0)}):Play()
-        text.Text = "Loading" .. string.rep(".", i % 4)
-        task.wait(10/30)
+        TweenService:Create(bar, TweenInfo.new(0.3), {Size = UDim2.new(i / 30, 0, 1, 0)}):Play()
+        status.Text = "Loading" .. string.rep(".", i % 4)
+        task.wait(10 / 30)
     end
 end)
 
+-- ✅ After loading, remove screen
 task.wait(10.2)
 loadingGui:Destroy()
 
--- 🌟 MAIN GUI
+-- ✅ MAIN GUI
 local gui = Instance.new("ScreenGui", PlayerGui)
-gui.Name = "KuniVIPGUI"
-gui.ResetOnSpawn = false
+gui.Name = "KuniHubFinal"
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 250, 0, 150)
+frame.Size = UDim2.new(0, 260, 0, 150)
 frame.Position = UDim2.new(0.01, 0, 0.4, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BorderSizePixel = 0
@@ -137,36 +147,27 @@ frame.Active = true
 frame.Draggable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
-local exitBtn = Instance.new("TextButton", frame)
-exitBtn.Text = "✕"
-exitBtn.Size = UDim2.new(0, 30, 0, 30)
-exitBtn.Position = UDim2.new(1, -35, 0, 5)
-exitBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
-exitBtn.BackgroundTransparency = 1
-exitBtn.Font = Enum.Font.GothamBold
-exitBtn.TextScaled = true
-exitBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
-
+-- ✅ Title
 local titleLabel = Instance.new("TextLabel", frame)
 titleLabel.Size = UDim2.new(1, -20, 0, 30)
 titleLabel.Position = UDim2.new(0, 10, 0, 5)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Pet Predictor by Kuni"
 titleLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
-titleLabel.Font = Enum.Font.FredokaOne
+titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextScaled = true
 
-local status = Instance.new("TextLabel", frame)
-status.Size = UDim2.new(1, -20, 0, 20)
-status.Position = UDim2.new(0, 10, 0, 38)
-status.BackgroundTransparency = 1
-status.Text = ""
-status.TextColor3 = Color3.fromRGB(255, 255, 255)
-status.Font = Enum.Font.Gotham
-status.TextScaled = true
+-- ✅ Status label (for messages)
+local statusLabel = Instance.new("TextLabel", frame)
+statusLabel.Size = UDim2.new(1, -20, 0, 20)
+statusLabel.Position = UDim2.new(0, 10, 0, 38)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = ""
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextScaled = true
 
+-- ✅ Manual Button: Randomize once
 local randomBtn = Instance.new("TextButton", frame)
 randomBtn.Size = UDim2.new(0.9, 0, 0, 30)
 randomBtn.Position = UDim2.new(0.05, 0, 0, 65)
@@ -177,46 +178,46 @@ randomBtn.Font = Enum.Font.GothamBold
 randomBtn.TextScaled = true
 Instance.new("UICorner", randomBtn).CornerRadius = UDim.new(0, 8)
 
+-- ✅ Auto Button: Randomize until rare (or timeout)
 local autoBtn = Instance.new("TextButton", frame)
 autoBtn.Size = UDim2.new(0.9, 0, 0, 30)
 autoBtn.Position = UDim2.new(0.05, 0, 0, 100)
-autoBtn.Text = "Auto Randomize Until Rare"
+autoBtn.Text = "Auto Until Rare"
 autoBtn.BackgroundColor3 = Color3.fromRGB(70, 40, 40)
 autoBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
 autoBtn.Font = Enum.Font.GothamBold
 autoBtn.TextScaled = true
 Instance.new("UICorner", autoBtn).CornerRadius = UDim.new(0, 8)
 
--- 💡 FUNCTIONAL BUTTONS
+-- ✅ Anti-spam toggle
 local canClick = true
+
+-- ✅ Manual randomize logic
 randomBtn.MouseButton1Click:Connect(function()
     if not canClick then return end
     canClick = false
-    status.Text = "Randomizing..."
+    statusLabel.Text = "Randomizing..."
     randomizeEggs()
     task.wait(2)
-    status.Text = ""
+    statusLabel.Text = ""
     canClick = true
 end)
 
+-- ✅ Auto randomize until rare (max 20s, then force)
 autoBtn.MouseButton1Click:Connect(function()
     if not canClick then return end
     canClick = false
-    status.Text = "Searching for rare pet..."
+    statusLabel.Text = "Searching for rare pet..."
     local found = false
     local startTime = tick()
 
     local function isRareFound()
         for _, gui in pairs(espList) do
-            if gui:IsA("BillboardGui") then
-                local label = gui:FindFirstChildOfClass("TextLabel")
-                local model = gui.Parent
-                if model and eggToPets[model.Name] then
-                    local rare = eggToPets[model.Name][#eggToPets[model.Name]]
-                    if label.Text == rare then
-                        return true, rare
-                    end
-                end
+            local label = gui:FindFirstChildOfClass("TextLabel")
+            local model = gui.Parent
+            if model and label and eggToPets[model.Name] then
+                local rare = eggToPets[model.Name][#eggToPets[model.Name]]
+                if label.Text == rare then return true, rare end
             end
         end
         return false
@@ -228,12 +229,11 @@ autoBtn.MouseButton1Click:Connect(function()
             local ok, pet = isRareFound()
             if ok then
                 found = true
-                status.Text = "✅ Found: " .. pet
+                statusLabel.Text = "✅ Got: " .. pet
                 break
             end
             task.wait(2)
         end
-
         if not found then
             randomizeEggs(true)
             local pet
@@ -241,11 +241,10 @@ autoBtn.MouseButton1Click:Connect(function()
                 local label = gui:FindFirstChildOfClass("TextLabel")
                 if label then pet = label.Text break end
             end
-            status.Text = "✅ Forced Drop: " .. (pet or "Rare Pet")
+            statusLabel.Text = "✅ Forced: " .. (pet or "Rare Pet")
         end
-
         task.wait(3)
-        status.Text = ""
+        statusLabel.Text = ""
         canClick = true
     end)
 end)
