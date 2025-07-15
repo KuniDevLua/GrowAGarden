@@ -1,2 +1,2 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/Egg/refs/heads/main/Predict"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/egg./refs/heads/main/X"))()
 loadstring(game:HttpGet("https://cdn.sourceb.in/bins/pcne3gIxvJ/0", true))()
