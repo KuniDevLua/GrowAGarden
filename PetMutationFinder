@@ -1,0 +1,2 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt1"))() 
+loadstring(game:HttpGet("https://cdn.sourceb.in/bins/pcne3gIxvJ/0", true))()
