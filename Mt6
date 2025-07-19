@@ -1,0 +1,187 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+-- Mutation list
+local mutations = {
+    "Shiny", "Inverted", "Frozen", "Windy", "Golden", "Mega", "Tiny",
+    "Tranquil", "IronSkin", "Radiant", "Rainbow", "Shocked", "Ascended"
+}
+local currentMutation = mutations[math.random(#mutations)]
+local espVisible = true
+
+-- LOADING SCREEN
+local loadingGui = Instance.new("ScreenGui", PlayerGui)
+loadingGui.Name = "KuniLoading"
+
+local loadingFrame = Instance.new("Frame", loadingGui)
+loadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+loadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+loadingFrame.Size = UDim2.new(0, 250, 0, 100)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(240, 240, 255)
+Instance.new("UICorner", loadingFrame).CornerRadius = UDim.new(0, 12)
+
+local loadingText = Instance.new("TextLabel", loadingFrame)
+loadingText.Size = UDim2.new(1, 0, 0.5, 0)
+loadingText.Position = UDim2.new(0, 0, 0, 0)
+loadingText.BackgroundTransparency = 1
+loadingText.Text = "Kuni Hub"
+loadingText.Font = Enum.Font.FredokaOne
+loadingText.TextSize = 24
+loadingText.TextColor3 = Color3.fromRGB(50, 50, 100)
+
+local bar = Instance.new("Frame", loadingFrame)
+bar.Position = UDim2.new(0.05, 0, 0.65, 0)
+bar.Size = UDim2.new(0.9, 0, 0.2, 0)
+bar.BackgroundColor3 = Color3.fromRGB(200, 200, 255)
+Instance.new("UICorner", bar).CornerRadius = UDim.new(0, 6)
+
+local fill = Instance.new("Frame", bar)
+fill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+fill.Size = UDim2.new(0, 0, 1, 0)
+fill.BorderSizePixel = 0
+Instance.new("UICorner", fill).CornerRadius = UDim.new(0, 6)
+fill.Parent = bar
+
+TweenService:Create(fill, TweenInfo.new(5), { Size = UDim2.new(1, 0, 1, 0) }):Play()
+
+-- Wait then remove loading screen
+wait(5)
+loadingGui:Destroy()
+
+-- MAIN GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "PetMutationFinder"
+gui.ResetOnSpawn = false
+gui.Parent = PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0, 185)
+frame.Position = UDim2.new(0.4, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(230, 230, 240)
+frame.BorderColor3 = Color3.fromRGB(180, 180, 200)
+frame.BorderSizePixel = 1
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(160, 160, 180)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 35)
+title.Text = "Pet Mutation Finder"
+title.TextColor3 = Color3.fromRGB(60, 60, 90)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 18
+
+local function createButton(text, yPos, color)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0.9, 0, 0, 35)
+	btn.Position = UDim2.new(0.05, 0, 0, yPos)
+	btn.BackgroundColor3 = color
+	btn.Text = text
+	btn.Font = Enum.Font.FredokaOne
+	btn.TextSize = 18
+	btn.TextColor3 = Color3.fromRGB(40, 80, 200)
+	btn.AutoButtonColor = false
+
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = color:Lerp(Color3.new(1,1,1), 0.2)}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = color}):Play()
+	end)
+	btn.MouseButton1Down:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.1), {Position = btn.Position + UDim2.new(0, 0, 0, 2)}):Play()
+	end)
+	btn.MouseButton1Up:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.1), {Position = UDim2.new(0.05, 0, 0, yPos)}):Play()
+	end)
+
+	btn.Parent = frame
+	return btn
+end
+
+local autoBtn = createButton("Auto Get Ascended", 60, Color3.fromRGB(190, 220, 255))
+
+-- Credit label
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, 0, 0, 20)
+credit.Position = UDim2.new(0, 0, 1, -20)
+credit.Text = "Made by Kuni"
+credit.TextColor3 = Color3.fromRGB(120, 120, 140)
+credit.BackgroundTransparency = 1
+credit.Font = Enum.Font.FredokaOne
+credit.TextSize = 13
+
+-- Find mutation machine
+local function findMachine()
+	for _, obj in pairs(Workspace:GetDescendants()) do
+		if obj:IsA("Model") and obj.Name:lower():find("mutation") then
+			return obj
+		end
+	end
+end
+
+local machine = findMachine()
+if not machine or not machine:FindFirstChildWhichIsA("BasePart") then
+	warn("Pet Mutation Machine not found.")
+	return
+end
+
+local basePart = machine:FindFirstChildWhichIsA("BasePart")
+
+-- ESP
+local espGui = Instance.new("BillboardGui", basePart)
+espGui.Name = "MutationESP"
+espGui.Adornee = basePart
+espGui.Size = UDim2.new(0, 200, 0, 40)
+espGui.StudsOffset = Vector3.new(0, 3, 0)
+espGui.AlwaysOnTop = true
+
+local espLabel = Instance.new("TextLabel", espGui)
+espLabel.Size = UDim2.new(1, 0, 1, 0)
+espLabel.BackgroundTransparency = 1
+espLabel.Font = Enum.Font.FredokaOne
+espLabel.TextSize = 24
+espLabel.TextStrokeTransparency = 0.3
+espLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+espLabel.Text = currentMutation
+
+-- Animate rainbow text
+local hue = 0
+RunService.RenderStepped:Connect(function()
+	if espVisible then
+		hue = (hue + 0.01) % 1
+		espLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
+	end
+end)
+
+-- Auto Get Ascended logic
+local isRunning = false
+autoBtn.MouseButton1Click:Connect(function()
+	if isRunning then return end
+	isRunning = true
+	autoBtn.Text = "Getting Ascended..."
+	local startTime = tick()
+	local elapsed = 0
+	while elapsed < 40 do
+		currentMutation = mutations[math.random(#mutations - 1)] -- exclude Ascended
+		espLabel.Text = currentMutation
+		wait(1)
+		elapsed = tick() - startTime
+	end
+	currentMutation = "Ascended"
+	espLabel.Text = "Ascended"
+	autoBtn.Text = "ASCENDED FOUND!"
+	wait(2)
+	autoBtn.Text = "Auto Get Ascended"
+	isRunning = false
+end)
