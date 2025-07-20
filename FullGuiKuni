@@ -1,0 +1,86 @@
+-- 🌟 Kuni Hub Stylish Loading Screen
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+-- GUI setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KuniLoadingScreen"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.Parent = CoreGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 400, 0, 180)
+Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.BorderSizePixel = 0
+Frame.ZIndex = 10
+Frame.Parent = ScreenGui
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0.3, 0)
+Title.Position = UDim2.new(0, 0, 0.1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "KUNI HUB"
+Title.Font = Enum.Font.FredokaOne
+Title.TextSize = 36
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextStrokeTransparency = 0.8
+Title.Parent = Frame
+
+-- Loading bar background
+local ProgressBarBG = Instance.new("Frame")
+ProgressBarBG.Size = UDim2.new(0.85, 0, 0.12, 0)
+ProgressBarBG.Position = UDim2.new(0.075, 0, 0.6, 0)
+ProgressBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ProgressBarBG.BorderSizePixel = 0
+ProgressBarBG.Parent = Frame
+Instance.new("UICorner", ProgressBarBG).CornerRadius = UDim.new(0, 6)
+
+-- Actual progress bar
+local ProgressBar = Instance.new("Frame")
+ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+ProgressBar.BorderSizePixel = 0
+ProgressBar.Parent = ProgressBarBG
+Instance.new("UICorner", ProgressBar).CornerRadius = UDim.new(0, 6)
+
+-- Animated dots label
+local Dots = Instance.new("TextLabel")
+Dots.Size = UDim2.new(1, 0, 0.2, 0)
+Dots.Position = UDim2.new(0, 0, 0.8, 0)
+Dots.BackgroundTransparency = 1
+Dots.Text = "Loading"
+Dots.Font = Enum.Font.Gotham
+Dots.TextSize = 18
+Dots.TextColor3 = Color3.fromRGB(180, 180, 180)
+Dots.Parent = Frame
+
+-- Animate loading bar over 8 seconds
+TweenService:Create(ProgressBar, TweenInfo.new(8, Enum.EasingStyle.Linear), {
+	Size = UDim2.new(1, 0, 1, 0)
+}):Play()
+
+-- Animate bouncing dots
+task.spawn(function()
+	local dotCount = 0
+	while ScreenGui.Parent do
+		dotCount = (dotCount % 3) + 1
+		Dots.Text = "Loading" .. string.rep(".", dotCount)
+		task.wait(0.5)
+	end
+end)
+
+-- Wait for loading to finish
+task.wait(8)
+
+-- Remove screen
+ScreenGui:Destroy()
+
+-- ✅ Load your main scripts
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/KuniHub"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/PetAgeChanger"))()
