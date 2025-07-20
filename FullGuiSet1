@@ -1,0 +1,397 @@
+local player = game.Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
+
+-- GUI Setup
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "KuniHub"
+
+-- Loading Screen
+local loadingFrame = Instance.new("Frame", screenGui)
+loadingFrame.Size = UDim2.new(0.3, 0, 0.2, 0)
+loadingFrame.Position = UDim2.new(0.35, 0, 0.4, 0)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+loadingFrame.BorderSizePixel = 0
+loadingFrame.ZIndex = 10
+Instance.new("UICorner", loadingFrame)
+
+local loadingText = Instance.new("TextLabel", loadingFrame)
+loadingText.Size = UDim2.new(1, 0, 0.5, 0)
+loadingText.Position = UDim2.new(0, 0, 0.1, 0)
+loadingText.Text = "Kuni Hub"
+loadingText.Font = Enum.Font.FredokaOne
+loadingText.TextSize = 28
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingText.BackgroundTransparency = 1
+
+local loadingBar = Instance.new("Frame", loadingFrame)
+loadingBar.Size = UDim2.new(0, 0, 0.15, 0)
+loadingBar.Position = UDim2.new(0, 0, 0.75, 0)
+loadingBar.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+Instance.new("UICorner", loadingBar)
+
+-- Animate loading
+TweenService:Create(loadingBar, TweenInfo.new(5), {Size = UDim2.new(1, 0, 0.15, 0)}):Play()
+wait(5)
+loadingFrame:Destroy()
+
+-- Main GUI Frame
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0.5, 0, 0.6, 0)
+mainFrame.Position = UDim2.new(0.25, 0, 0.2, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = true
+Instance.new("UICorner", mainFrame)
+
+-- Sidebar
+local sidebar = Instance.new("Frame", mainFrame)
+sidebar.Size = UDim2.new(0, 140, 1, 0)
+sidebar.Position = UDim2.new(0, 0, 0, 0)
+sidebar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", sidebar)
+
+-- Content Frame
+local contentHolder = Instance.new("Frame", mainFrame)
+contentHolder.Size = UDim2.new(1, -140, 1, 0)
+contentHolder.Position = UDim2.new(0, 140, 0, 0)
+contentHolder.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+contentHolder.BorderSizePixel = 0
+
+local tabButtons = {}
+local contentFrames = {}
+
+local function createTab(name)
+	local button = Instance.new("TextButton", sidebar)
+	button.Size = UDim2.new(1, -20, 0, 40)
+	button.Position = UDim2.new(0, 10, 0, #tabButtons * 50 + 10)
+	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.Text = name
+	button.Font = Enum.Font.FredokaOne
+	button.TextSize = 16
+	Instance.new("UICorner", button)
+
+	local frame = Instance.new("Frame", contentHolder)
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundTransparency = 1
+	frame.Visible = #tabButtons == 0
+
+	table.insert(tabButtons, button)
+	contentFrames[name] = frame
+
+	button.MouseButton1Click:Connect(function()
+		for _, btn in pairs(tabButtons) do btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50) end
+		for _, frm in pairs(contentFrames) do frm.Visible = false end
+		button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+		frame.Visible = true
+	end)
+end
+
+createTab("Randomizer")
+createTab("Age")
+createTab("Mutation")
+
+--------------------------
+-- 🟧 Pet Randomizer Tab --
+--------------------------
+local petTable = {
+	["Common Egg"] = {"Dog", "Bunny", "Golden Lab"},
+	["Uncommon Egg"] = {"Chicken", "Black Bunny", "Cat", "Deer"},
+	["Rare Egg"] = {"Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer"},
+	["Legendary Egg"] = {"Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey"},
+	["Mythical Egg"] = {"Grey Mouse", "Brown Mouse", "Squirrel", "Red Giant Ant"},
+	["Bug Egg"] = {"Snail", "Caterpillar", "Giant Ant", "Praying Mantis"},
+	["Night Egg"] = {"Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl"},
+	["Bee Egg"] = {"Bee", "Honey Bee", "Bear Bee", "Petal Bee"},
+	["Anti Bee Egg"] = {"Wasp", "Moth", "Tarantula Hawk"},
+	["Oasis Egg"] = {"Meerkat", "Sand Snake", "Axolotl"},
+	["Paradise Egg"] = {"Ostrich", "Peacock", "Capybara"},
+	["Dinosaur Egg"] = {"Raptor", "Triceratops", "Stegosaurus"},
+	["Primal Egg"] = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus"}
+}
+
+-- ⚠ Continue to Part 2 for Pet ESP, Auto Randomizer, and Age Changer
+
+-- ESP logic
+local rarePets = {
+	["Golden Lab"] = true, ["Deer"] = true, ["Spotted Deer"] = true, ["Silver Monkey"] = true,
+	["Red Giant Ant"] = true, ["Praying Mantis"] = true, ["Night Owl"] = true, ["Petal Bee"] = true,
+	["Tarantula Hawk"] = true, ["Axolotl"] = true, ["Capybara"] = true, ["Stegosaurus"] = true,
+	["Pachycephalosaurus"] = true
+}
+
+local highlights = {}
+
+local function updateESP()
+	for _, v in pairs(highlights) do
+		v:Destroy()
+	end
+	table.clear(highlights)
+
+	for _, egg in ipairs(Workspace:GetDescendants()) do
+		if egg:IsA("Model") and egg:FindFirstChild("EggName") and egg:FindFirstChild("PetName") then
+			local h = Instance.new("Highlight", egg)
+			h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+			h.FillColor = Color3.fromRGB(50, 200, 50)
+			h.FillTransparency = 0.25
+			h.OutlineColor = Color3.fromRGB(0, 0, 0)
+			h.OutlineTransparency = 0
+			table.insert(highlights, h)
+
+			local b = Instance.new("BillboardGui", egg)
+			b.Size = UDim2.new(0, 200, 0, 50)
+			b.StudsOffset = Vector3.new(0, 3, 0)
+			b.AlwaysOnTop = true
+
+			local tl = Instance.new("TextLabel", b)
+			tl.Size = UDim2.new(1, 0, 1, 0)
+			tl.BackgroundTransparency = 1
+			tl.Text = egg.PetName.Value
+			tl.Font = Enum.Font.FredokaOne
+			tl.TextSize = 20
+			tl.TextColor3 = rarePets[egg.PetName.Value] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 255, 255)
+
+			if rarePets[egg.PetName.Value] then
+				coroutine.wrap(function()
+					while task.wait(0.5) do
+						tl.TextColor3 = tl.TextColor3 == Color3.fromRGB(0, 255, 0) and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 255, 0)
+					end
+				end)()
+			end
+		end
+	end
+end
+
+local tab = contentFrames["Randomizer"]
+
+local eggNameLabel = Instance.new("TextLabel", tab)
+eggNameLabel.Size = UDim2.new(0, 300, 0, 40)
+eggNameLabel.Position = UDim2.new(0, 20, 0, 20)
+eggNameLabel.Text = "Pet Name"
+eggNameLabel.Font = Enum.Font.FredokaOne
+eggNameLabel.TextSize = 20
+eggNameLabel.BackgroundTransparency = 1
+eggNameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local autoBtn = Instance.new("TextButton", tab)
+autoBtn.Size = UDim2.new(0, 140, 0, 40)
+autoBtn.Position = UDim2.new(0, 20, 0, 70)
+autoBtn.Text = "Auto Randomizer"
+autoBtn.Font = Enum.Font.FredokaOne
+autoBtn.TextSize = 16
+autoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+autoBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", autoBtn)
+
+local rerollBtn = Instance.new("TextButton", tab)
+rerollBtn.Size = UDim2.new(0, 140, 0, 40)
+rerollBtn.Position = UDim2.new(0, 180, 0, 70)
+rerollBtn.Text = "Manual Reroll"
+rerollBtn.Font = Enum.Font.FredokaOne
+rerollBtn.TextSize = 16
+rerollBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rerollBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", rerollBtn)
+
+local espBtn = Instance.new("TextButton", tab)
+espBtn.Size = UDim2.new(0, 140, 0, 40)
+espBtn.Position = UDim2.new(0, 20, 0, 120)
+espBtn.Text = "Toggle ESP"
+espBtn.Font = Enum.Font.FredokaOne
+espBtn.TextSize = 16
+espBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+espBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", espBtn)
+
+local espVisible = true
+espBtn.MouseButton1Click:Connect(function()
+	espVisible = not espVisible
+	for _, v in pairs(highlights) do
+		v.Enabled = espVisible
+	end
+end)
+
+-- Manual Reroll
+local debounce = false
+rerollBtn.MouseButton1Click:Connect(function()
+	if debounce then return end
+	debounce = true
+	for _, egg in ipairs(Workspace:GetDescendants()) do
+		if egg:IsA("Model") and egg:FindFirstChild("EggName") then
+			local name = egg.EggName.Value
+			local pets = petTable[name]
+			if pets then
+				local pick = pets[math.random(1, #pets)]
+				local p = egg:FindFirstChild("PetName") or Instance.new("StringValue", egg)
+				p.Name = "PetName"
+				p.Value = pick
+			end
+		end
+	end
+	updateESP()
+	wait(1)
+	debounce = false
+end)
+
+-- Auto Randomizer
+local running = false
+autoBtn.MouseButton1Click:Connect(function()
+	if running then return end
+	running = true
+	local elapsed = 0
+	eggNameLabel.Text = "Randomizing..."
+
+	while elapsed < 40 do
+		for _, egg in ipairs(Workspace:GetDescendants()) do
+			if egg:IsA("Model") and egg:FindFirstChild("EggName") then
+				local name = egg.EggName.Value
+				local pets = petTable[name]
+				if pets then
+					local pick = pets[math.random(1, #pets)]
+					local p = egg:FindFirstChild("PetName") or Instance.new("StringValue", egg)
+					p.Name = "PetName"
+					p.Value = pick
+				end
+			end
+		end
+		updateESP()
+		task.wait(1)
+		elapsed += 1
+	end
+
+	for _, egg in ipairs(Workspace:GetDescendants()) do
+		if egg:IsA("Model") and egg:FindFirstChild("EggName") then
+			local name = egg.EggName.Value
+			local pets = petTable[name]
+			if pets then
+				for _, pet in pairs(pets) do
+					if rarePets[pet] then
+						local p = egg:FindFirstChild("PetName") or Instance.new("StringValue", egg)
+						p.Name = "PetName"
+						p.Value = pet
+						break
+					end
+				end
+			end
+		end
+	end
+
+	eggNameLabel.Text = "Found Rare Pet!"
+	updateESP()
+	running = false
+end)
+
+-- ⚠ Continue to Part 3 for Pet Age Changer + Mutation Finder
+
+
+-- 🐾 Pet Age Changer Tab
+local ageTab = contentFrames["Age Changer"]
+
+local ageLabel = Instance.new("TextLabel", ageTab)
+ageLabel.Size = UDim2.new(0, 300, 0, 40)
+ageLabel.Position = UDim2.new(0, 20, 0, 20)
+ageLabel.Text = "Set Equipped Pet Age"
+ageLabel.Font = Enum.Font.FredokaOne
+ageLabel.TextSize = 20
+ageLabel.BackgroundTransparency = 1
+ageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local setAgeBtn = Instance.new("TextButton", ageTab)
+setAgeBtn.Size = UDim2.new(0, 200, 0, 40)
+setAgeBtn.Position = UDim2.new(0, 20, 0, 70)
+setAgeBtn.Text = "Set Age to 50"
+setAgeBtn.Font = Enum.Font.FredokaOne
+setAgeBtn.TextSize = 16
+setAgeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+setAgeBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", setAgeBtn)
+
+setAgeBtn.MouseButton1Click:Connect(function()
+	setAgeBtn.Text = "Setting Age..."
+	for _, pet in ipairs(Workspace:GetChildren()) do
+		if pet:IsA("Model") and pet:FindFirstChild("PetAge") then
+			pet.PetAge.Value = 50
+		end
+	end
+	wait(1)
+	setAgeBtn.Text = "Set Age to 50"
+end)
+
+-- 🧬 Mutation Finder Tab
+local mutationTab = contentFrames["Mutation Finder"]
+
+local mutateBtn = Instance.new("TextButton", mutationTab)
+mutateBtn.Size = UDim2.new(0, 200, 0, 40)
+mutateBtn.Position = UDim2.new(0, 20, 0, 20)
+mutateBtn.Text = "Auto Get Ascended"
+mutateBtn.Font = Enum.Font.FredokaOne
+mutateBtn.TextSize = 16
+mutateBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+mutateBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", mutateBtn)
+
+local rerollMutationBtn = Instance.new("TextButton", mutationTab)
+rerollMutationBtn.Size = UDim2.new(0, 200, 0, 40)
+rerollMutationBtn.Position = UDim2.new(0, 20, 0, 70)
+rerollMutationBtn.Text = "Mutation Reroll"
+rerollMutationBtn.Font = Enum.Font.FredokaOne
+rerollMutationBtn.TextSize = 16
+rerollMutationBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+rerollMutationBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+Instance.new("UICorner", rerollMutationBtn)
+
+-- Anti-spam
+local mutating = false
+mutateBtn.MouseButton1Click:Connect(function()
+	if mutating then return end
+	mutating = true
+	mutateBtn.Text = "Getting Ascended..."
+	local seconds = 0
+
+	while seconds < 40 do
+		for _, pet in ipairs(Workspace:GetChildren()) do
+			if pet:IsA("Model") and pet:FindFirstChild("Mutation") then
+				local mutation = pet:FindFirstChild("Mutation")
+				mutation.Value = "None"
+			end
+		end
+		wait(1)
+		seconds += 1
+	end
+
+	for _, pet in ipairs(Workspace:GetChildren()) do
+		if pet:IsA("Model") and pet:FindFirstChild("Mutation") then
+			pet.Mutation.Value = "Ascended"
+		end
+	end
+
+	mutateBtn.Text = "ASCENDED FOUND!"
+	wait(1.5)
+	mutateBtn.Text = "Auto Get Ascended"
+	mutating = false
+end)
+
+-- Manual Mutation Reroll
+local rMutateDebounce = false
+rerollMutationBtn.MouseButton1Click:Connect(function()
+	if rMutateDebounce then return end
+	rMutateDebounce = true
+	for _, pet in ipairs(Workspace:GetChildren()) do
+		if pet:IsA("Model") and pet:FindFirstChild("Mutation") then
+			pet.Mutation.Value = "None"
+		end
+	end
+	wait(1)
+	rMutateDebounce = false
+end)
+
+-- Footer
+local footer = Instance.new("TextLabel", gui)
+footer.Text = "Made by Kuni"
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
+footer.BackgroundTransparency = 1
+footer.Font = Enum.Font.FredokaOne
+footer.TextSize = 14
+footer.TextColor3 = Color3.fromRGB(160, 160, 160)
