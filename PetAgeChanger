@@ -1,0 +1,106 @@
+-- Create GUI for Set Age to 50
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Main Frame
+local AgeFrame = Instance.new("Frame")
+AgeFrame.Size = UDim2.new(0, 250, 0, 150)
+AgeFrame.Position = UDim2.new(0.5, -125, 0.5, -75)
+AgeFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AgeFrame.Visible = true
+AgeFrame.Parent = game:GetService("CoreGui")
+AgeFrame.Active = true
+AgeFrame.Draggable = true
+AgeFrame.Name = "SetAgeFrame"
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = AgeFrame
+
+-- Title Label
+local Title = Instance.new("TextLabel")
+Title.Text = "Kuni Age Changer"
+Title.Font = Enum.Font.FredokaOne
+Title.TextSize = 22
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, 0, 0.25, 0)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.Parent = AgeFrame
+
+-- Equipped Pet Name
+local PetNameLabel = Instance.new("TextLabel")
+PetNameLabel.Text = "Equipped Pet: Unknown"
+PetNameLabel.Font = Enum.Font.FredokaOne
+PetNameLabel.TextSize = 16
+PetNameLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+PetNameLabel.Size = UDim2.new(1, -20, 0.25, 0)
+PetNameLabel.Position = UDim2.new(0, 10, 0.25, 0)
+PetNameLabel.BackgroundTransparency = 1
+PetNameLabel.TextXAlignment = Enum.TextXAlignment.Left
+PetNameLabel.Parent = AgeFrame
+
+-- Set Age Button
+local SetAgeBtn = Instance.new("TextButton")
+SetAgeBtn.Text = "Set Age to 50"
+SetAgeBtn.Font = Enum.Font.FredokaOne
+SetAgeBtn.TextSize = 18
+SetAgeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SetAgeBtn.Size = UDim2.new(0.8, 0, 0.2, 0)
+SetAgeBtn.Position = UDim2.new(0.1, 0, 0.55, 0)
+SetAgeBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 60)
+SetAgeBtn.Parent = AgeFrame
+
+local UICorner2 = Instance.new("UICorner")
+UICorner2.CornerRadius = UDim.new(0, 6)
+UICorner2.Parent = SetAgeBtn
+
+-- Countdown text
+local CountdownLabel = Instance.new("TextLabel")
+CountdownLabel.Text = ""
+CountdownLabel.Font = Enum.Font.FredokaOne
+CountdownLabel.TextSize = 16
+CountdownLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CountdownLabel.Size = UDim2.new(1, 0, 0.2, 0)
+CountdownLabel.Position = UDim2.new(0, 0, 0.8, 0)
+CountdownLabel.BackgroundTransparency = 1
+CountdownLabel.Parent = AgeFrame
+
+-- Function to set pet age
+local function setPetAgeTo50()
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local pet = char:FindFirstChild("EquippedPet")
+    if pet then
+        for i = 5, 0, -1 do
+            CountdownLabel.Text = "Setting age in " .. i .. "s..."
+            task.wait(1)
+        end
+        local age = pet:FindFirstChild("Age")
+        if age then
+            age.Value = 50
+            CountdownLabel.Text = "Pet age set to 50!"
+        else
+            CountdownLabel.Text = "No Age property found!"
+        end
+    else
+        CountdownLabel.Text = "No pet equipped!"
+    end
+end
+
+-- Update pet name on open
+local function updatePetName()
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local pet = char:FindFirstChild("EquippedPet")
+    if pet then
+        PetNameLabel.Text = "Equipped Pet: " .. pet.Name
+    else
+        PetNameLabel.Text = "Equipped Pet: None"
+    end
+end
+
+updatePetName()
+
+-- Button click
+SetAgeBtn.MouseButton1Click:Connect(function()
+    setPetAgeTo50()
+end)
