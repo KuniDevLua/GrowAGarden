@@ -13,45 +13,6 @@ local mutations = {
 local currentMutation = mutations[math.random(#mutations)]
 local espVisible = true
 
--- 🕐 Loading Screen
-local loadingGui = Instance.new("ScreenGui", PlayerGui)
-loadingGui.Name = "KuniLoading"
-loadingGui.ResetOnSpawn = false
-
-local loadingFrame = Instance.new("Frame", loadingGui)
-loadingFrame.Size = UDim2.new(0, 250, 0, 120)
-loadingFrame.Position = UDim2.new(0.5, -125, 0.5, -60)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(245, 245, 250)
-loadingFrame.BorderSizePixel = 0
-Instance.new("UICorner", loadingFrame).CornerRadius = UDim.new(0, 12)
-
-local loadingLabel = Instance.new("TextLabel", loadingFrame)
-loadingLabel.Size = UDim2.new(1, 0, 0.5, 0)
-loadingLabel.Position = UDim2.new(0, 0, 0, 0)
-loadingLabel.Text = "Kuni Hub"
-loadingLabel.Font = Enum.Font.FredokaOne
-loadingLabel.TextColor3 = Color3.fromRGB(50, 50, 80)
-loadingLabel.TextSize = 28
-loadingLabel.BackgroundTransparency = 1
-
-local barBG = Instance.new("Frame", loadingFrame)
-barBG.Size = UDim2.new(0.9, 0, 0, 10)
-barBG.Position = UDim2.new(0.05, 0, 0.7, 0)
-barBG.BackgroundColor3 = Color3.fromRGB(220, 220, 230)
-barBG.BorderSizePixel = 0
-Instance.new("UICorner", barBG).CornerRadius = UDim.new(0, 6)
-
-local barFill = Instance.new("Frame", barBG)
-barFill.Size = UDim2.new(0, 0, 1, 0)
-barFill.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
-barFill.BorderSizePixel = 0
-Instance.new("UICorner", barFill).CornerRadius = UDim.new(0, 6)
-
--- Fill loading bar
-TweenService:Create(barFill, TweenInfo.new(5), {Size = UDim2.new(1, 0, 1, 0)}):Play()
-wait(5)
-loadingGui:Destroy()
-
 -- 🌿 Main GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "PetMutationFinder"
@@ -187,7 +148,7 @@ local function autoAscended()
 	autoBtn.Text = "Getting Ascended..."
 	local t = 0
 	while t < 40 do
-		currentMutation = mutations[math.random(#mutations - 1)]
+		currentMutation = mutations[math.random(#mutations - 1)] -- Exclude "Ascended"
 		espLabel.Text = currentMutation
 		wait(1)
 		t += 1
