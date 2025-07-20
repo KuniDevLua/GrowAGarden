@@ -1,1 +1,247 @@
+-- Kuni Hub Full Script with Set Pet Age to 50
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
 
+-- ESP and rare pet list
+local rarePets = {
+    ["Rare Egg"] = {"Monkey", "Orange Tabby", "Spotted Deer"},
+    ["Legendary Egg"] = {"Silver Monkey"},
+    ["Mythical Egg"] = {"Red Giant Ant"},
+    ["Night Egg"] = {"Echo Frog", "Night Owl"},
+    ["Bee Egg"] = {"Petal Bee"},
+    ["Anti Bee Egg"] = {"Tarantula Hawk"},
+    ["Paradise Egg"] = {"Peacock"},
+    ["Dinosaur Egg"] = {"Stegosaurus"},
+    ["Primal Egg"] = {"Pachycephalosaurus"},
+}
+
+local petTable = {
+    ["Common Egg"] = {"Dog", "Bunny", "Golden Lab"},
+    ["Uncommon Egg"] = {"Chicken", "Black Bunny", "Cat", "Deer"},
+    ["Rare Egg"] = {"Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer"},
+    ["Legendary Egg"] = {"Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey"},
+    ["Mythical Egg"] = {"Grey Mouse", "Brown Mouse", "Squirrel", "Red Giant Ant"},
+    ["Bug Egg"] = {"Snail", "Caterpillar", "Giant Ant", "Praying Mantis"},
+    ["Night Egg"] = {"Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl"},
+    ["Bee Egg"] = {"Bee", "Honey Bee", "Bear Bee", "Petal Bee"},
+    ["Anti Bee Egg"] = {"Wasp", "Moth", "Tarantula Hawk"},
+    ["Oasis Egg"] = {"Meerkat", "Sand Snake", "Axolotl"},
+    ["Paradise Egg"] = {"Ostrich", "Peacock", "Capybara"},
+    ["Dinosaur Egg"] = {"Raptor", "Triceratops", "Stegosaurus"},
+    ["Primal Egg"] = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus"},
+}
+
+local function createESP(part, text, isRare)
+    local billboard = Instance.new("BillboardGui", part)
+    billboard.Name = "KuniESP"
+    billboard.Size = UDim2.new(0, 100, 0, 40)
+    billboard.AlwaysOnTop = true
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+
+    local label = Instance.new("TextLabel", billboard)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.FredokaOne
+    label.TextSize = 16
+    label.TextColor3 = isRare and Color3.fromRGB(0, 255, 0) or Color3.new(1, 1, 1)
+    label.Text = text
+    label.Name = "ESPText"
+
+    if isRare then
+        task.spawn(function()
+            while label.Parent do
+                label.Visible = not label.Visible
+                wait(0.5)
+            end
+        end)
+    end
+end
+
+local function toggleESP(state)
+    for _, v in pairs(workspace:GetChildren()) do
+        if petTable[v.Name] and v:FindFirstChild("Top") then
+            local existing = v.Top:FindFirstChild("KuniESP")
+            if existing then
+                existing:Destroy()
+            end
+            if state then
+                local petList = petTable[v.Name]
+                local randomPet = petList[math.random(#petList)]
+                local isRare = table.find(rarePets[v.Name] or {}, randomPet)
+                createESP(v.Top, randomPet, isRare)
+            end
+        end
+    end
+end
+
+-- GUI Setup
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "KuniHub"
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 310)
+frame.Position = UDim2.new(0, 20, 0.5, -150)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Kuni Hub"
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 22
+title.BackgroundColor3 = Color3.fromRGB(40, 170, 40)
+title.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", title)
+
+local randomizeBtn = Instance.new("TextButton", frame)
+randomizeBtn.Size = UDim2.new(1, -20, 0, 30)
+randomizeBtn.Position = UDim2.new(0, 10, 0, 40)
+randomizeBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+randomizeBtn.Text = "Randomize Pets"
+randomizeBtn.Font = Enum.Font.FredokaOne
+randomizeBtn.TextSize = 16
+randomizeBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", randomizeBtn)
+
+local espBtn = Instance.new("TextButton", frame)
+espBtn.Size = UDim2.new(1, -20, 0, 30)
+espBtn.Position = UDim2.new(0, 10, 0, 80)
+espBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+espBtn.Text = "ESP: OFF"
+espBtn.Font = Enum.Font.FredokaOne
+espBtn.TextSize = 16
+espBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", espBtn)
+
+local autoBtn = Instance.new("TextButton", frame)
+autoBtn.Size = UDim2.new(1, -20, 0, 30)
+autoBtn.Position = UDim2.new(0, 10, 0, 120)
+autoBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+autoBtn.Text = "Auto Randomize: OFF"
+autoBtn.Font = Enum.Font.FredokaOne
+autoBtn.TextSize = 16
+autoBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", autoBtn)
+
+-- Equipped Pet Info
+local petInfoLabel = Instance.new("TextLabel", frame)
+petInfoLabel.Text = "Equipped Pet: [None]"
+petInfoLabel.Font = Enum.Font.FredokaOne
+petInfoLabel.TextSize = 16
+petInfoLabel.TextColor3 = Color3.fromRGB(255, 255, 150)
+petInfoLabel.BackgroundTransparency = 1
+petInfoLabel.Position = UDim2.new(0, 10, 0, 170)
+petInfoLabel.Size = UDim2.new(1, -20, 0, 20)
+petInfoLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local petAgeBtn = Instance.new("TextButton", frame)
+petAgeBtn.Size = UDim2.new(1, -20, 0, 30)
+petAgeBtn.Position = UDim2.new(0, 10, 0, 200)
+petAgeBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+petAgeBtn.Text = "Set Pet Age to 50"
+petAgeBtn.TextSize = 16
+petAgeBtn.Font = Enum.Font.FredokaOne
+petAgeBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", petAgeBtn)
+
+-- Functions
+local lastClick = 0
+randomizeBtn.MouseButton1Click:Connect(function()
+    if tick() - lastClick < 1 then return end
+    lastClick = tick()
+    local selectedEggs = {}
+    for _, egg in pairs(workspace:GetChildren()) do
+        if petTable[egg.Name] then
+            table.insert(selectedEggs, egg)
+        end
+    end
+    for _, egg in pairs(selectedEggs) do
+        local petList = petTable[egg.Name]
+        local randomPet = petList[math.random(#petList)]
+        local isRare = table.find(rarePets[egg.Name] or {}, randomPet)
+        local esp = egg:FindFirstChild("Top") and egg.Top:FindFirstChild("KuniESP")
+        if esp then
+            esp.ESPText.Text = randomPet
+            esp.ESPText.TextColor3 = isRare and Color3.fromRGB(0,255,0) or Color3.new(1,1,1)
+        end
+    end
+end)
+
+espBtn.MouseButton1Click:Connect(function()
+    local on = espBtn.Text == "ESP: OFF"
+    espBtn.Text = on and "ESP: ON" or "ESP: OFF"
+    toggleESP(on)
+end)
+
+local autoRunning = false
+autoBtn.MouseButton1Click:Connect(function()
+    autoRunning = not autoRunning
+    autoBtn.Text = autoRunning and "Auto Randomize: ON" or "Auto Randomize: OFF"
+    if autoRunning then
+        local start = tick()
+        while autoRunning do
+            local forceRare = tick() - start >= 40
+            for _, egg in pairs(workspace:GetChildren()) do
+                if petTable[egg.Name] then
+                    local petList = petTable[egg.Name]
+                    local pet
+                    if forceRare and rarePets[egg.Name] then
+                        local rareList = rarePets[egg.Name]
+                        pet = rareList[math.random(#rareList)]
+                    else
+                        pet = petList[math.random(#petList)]
+                    end
+                    local isRare = table.find(rarePets[egg.Name] or {}, pet)
+                    local esp = egg:FindFirstChild("Top") and egg.Top:FindFirstChild("KuniESP")
+                    if esp then
+                        esp.ESPText.Text = forceRare and "Found Rare Pet!" or "Randomizing..."
+                        wait(0.5)
+                        esp.ESPText.Text = pet
+                        esp.ESPText.TextColor3 = isRare and Color3.fromRGB(0,255,0) or Color3.new(1,1,1)
+                    end
+                end
+            end
+            wait(1)
+        end
+    end
+end)
+
+-- Equipped pet tool detection
+local function getEquippedPetTool()
+    local char = player.Character or player.CharacterAdded:Wait()
+    for _, tool in pairs(char:GetChildren()) do
+        if tool:IsA("Tool") and tool.Name:find("Age") then
+            return tool
+        end
+    end
+end
+
+local function updatePetInfo()
+    local tool = getEquippedPetTool()
+    petInfoLabel.Text = tool and ("Equipped Pet: " .. tool.Name) or "Equipped Pet: [None]"
+end
+
+task.spawn(function()
+    while true do
+        updatePetInfo()
+        task.wait(1)
+    end
+end)
+
+petAgeBtn.MouseButton1Click:Connect(function()
+    local tool = getEquippedPetTool()
+    if tool then
+        for i = 20, 1, -1 do
+            petAgeBtn.Text = "Changing Age in " .. i .. "..."
+            wait(1)
+        end
+        tool.Name = tool.Name:gsub("%[Age%s%d+%]", "[Age 50]")
+        petAgeBtn.Text = "Set Pet Age to 50"
+    else
+        petAgeBtn.Text = "No Pet Equipped!"
+        wait(2)
+        petAgeBtn.Text = "Set Pet Age to 50"
+    end
+end)
