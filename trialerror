@@ -7,6 +7,9 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
+-- ✅ Load Kuni loading screen (appears before GUI)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen"))()
+
 local petTable = {
     ["Common Egg"] = { "Bunny", "Dog", "Golden lab" },
     ["Uncommon Egg"] = { "Chicken", "Black bunny", "Cat", "Deer" },
@@ -134,8 +137,9 @@ local function randomizeNearbyEggs()
     print("Randomized", #eggs, "eggs.")
 end
 
+-- ✅ Updated countdown to 3 seconds instead of 10
 local function countdownAndRandomize(button)
-    for i = 10, 1, -1 do
+    for i = 3, 1, -1 do
         button.Text = "Randomizing in: " .. i
         wait(1)
     end
@@ -190,7 +194,7 @@ end
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 32)
 title.BackgroundTransparency = 1
-title.Text = "Egg Detector Pro" 
+title.Text = "Egg Detector Pro"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
 title.TextColor3 = Color3.new(1, 1, 1)
