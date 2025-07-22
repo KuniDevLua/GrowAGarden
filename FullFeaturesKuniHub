@@ -1,4 +1,4 @@
--- Kuni Style: Visual Pet Hatch Simulator with Drag, ESP, Auto Random, Pet Age Loader
+-- ⛏ Kuni Style Pet Hatch GUI with Minimize, Tappable Icon, ESP, Auto Random
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -196,7 +196,7 @@ title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
 title.TextColor3 = Color3.new(1, 1, 1)
 
--- Drag
+-- Dragging main frame
 local drag = Instance.new("TextButton", title)
 drag.Size = UDim2.new(1, 0, 1, 0)
 drag.Text = ""
@@ -257,7 +257,7 @@ mutationBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
 end)
 
--- Footer Credit
+-- Footer
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, 0, 0, 20)
 credit.Position = UDim2.new(0, 0, 0, 300)
@@ -267,7 +267,7 @@ credit.Font = Enum.Font.FredokaOne
 credit.TextSize = 14
 credit.TextColor3 = Color3.fromRGB(180, 180, 180)
 
--- Minimize Button + Minimized Icon
+-- ✅ Minimize Button + Tappable Icon
 local minimized = false
 
 local miniBtn = Instance.new("TextButton")
@@ -295,18 +295,37 @@ minimizedLabel.Parent = gui
 Instance.new("UICorner", minimizedLabel).CornerRadius = UDim.new(0, 10)
 Instance.new("UIStroke", minimizedLabel).Color = Color3.fromRGB(60, 60, 60)
 
-local miniDrag = Instance.new("TextButton", minimizedLabel)
-miniDrag.Size = UDim2.new(1, 0, 1, 0)
-miniDrag.Text = ""
-miniDrag.BackgroundTransparency = 1
-miniDrag.MouseButton1Down:Connect(function()
-	dragging = true
-	offset = Vector2.new(mouse.X - minimizedLabel.Position.X.Offset, mouse.Y - minimizedLabel.Position.Y.Offset)
+local draggingMini = false
+local movedDuringDrag = false
+local dragThreshold = 5
+
+minimizedLabel.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		draggingMini = true
+		movedDuringDrag = false
+		offset = Vector2.new(input.Position.X - minimizedLabel.Position.X.Offset, input.Position.Y - minimizedLabel.Position.Y.Offset)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if draggingMini then
+		draggingMini = false
+		if not movedDuringDrag then
+			frame.Visible = true
+			minimizedLabel.Visible = false
+			minimized = false
+		end
+	end
 end)
 
 RunService.RenderStepped:Connect(function()
-	if dragging and minimized then
-		minimizedLabel.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+	if draggingMini and minimized then
+		local newPos = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+		local delta = (minimizedLabel.Position.X.Offset - newPos.X.Offset)^2 + (minimizedLabel.Position.Y.Offset - newPos.Y.Offset)^2
+		if delta > dragThreshold then
+			movedDuringDrag = true
+		end
+		minimizedLabel.Position = newPos
 	end
 end)
 
@@ -317,4 +336,3 @@ local function toggleMinimize()
 end
 
 miniBtn.MouseButton1Click:Connect(toggleMinimize)
-minimizedLabel.MouseButton1Click:Connect(toggleMinimize)
