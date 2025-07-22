@@ -39,6 +39,30 @@ title.BackgroundTransparency = 1
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
 
+-- ❌ Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 90, 90)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.FredokaOne
+closeBtn.TextSize = 16
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Parent = frame
+closeBtn.AutoButtonColor = false
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", closeBtn).Color = Color3.fromRGB(200, 60, 60)
+
+closeBtn.MouseEnter:Connect(function()
+	TweenService:Create(closeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 110, 110)}):Play()
+end)
+closeBtn.MouseLeave:Connect(function()
+	TweenService:Create(closeBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 90, 90)}):Play()
+end)
+closeBtn.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
 local function createButton(text, yPos, callback)
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(0.9, 0, 0, 35)
