@@ -8,7 +8,7 @@ local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
 -- ✅ Load Kuni loading screen (appears before GUI)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen1"))()
 
 local petTable = {
     ["Common Egg"] = { "Bunny", "Dog", "Golden lab" },
