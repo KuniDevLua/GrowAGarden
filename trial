@@ -1,0 +1,337 @@
+-- ⛏ Kuni Style Pet Hatch GUI with Minimize, Tappable Icon, ESP, Auto Random
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local petTable = {
+    ["Common Egg"] = { "Bunny", "Dog", "Golden lab" },
+    ["Uncommon Egg"] = { "Chicken", "Black bunny", "Cat", "Deer" },
+    ["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange tabby", "Spotted deer" },
+    ["Legendary Egg"] = { "Cow", "Polar bear", "Sea otter", "Turtle", "Silver monkey" },
+    ["Mythical Egg"] = { "Grey mouse", "Brown mouse", "Squirrel", "Red giant ant" },
+    ["Bug Egg"] = { "Snail", "Caterpillar", "Giant ant", "Praying mantis", "Dragonfly" },
+    ["Bee Egg"] = { "Bee", "Honey bee", "Bear bee", "Petal bee", "Queen bee" },
+    ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo frog", "Night owl", "Raccoon" },
+    ["Oasis Egg"] = { "Meerkat", "Sand snake", "Axolotl" },
+    ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara" },
+    ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "Spinosaurus", "Ankylosaurus", "Dilophosaurus" },
+    ["Zen Egg"] = { "Shiba Inu", "Tanuki", "Kappa", "Kitsune" },
+    ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus" },
+}
+
+local espEnabled = true
+local truePetMap = {}
+
+local function glitchLabelEffect(label)
+    coroutine.wrap(function()
+        local original = label.TextColor3
+        for i = 1, 2 do
+            label.TextColor3 = Color3.new(0, 1, 0)
+            wait(0.07)
+            label.TextColor3 = original
+            wait(0.07)
+        end
+    end)()
+end
+
+local function applyEggESP(eggModel, petName)
+    local existingLabel = eggModel:FindFirstChild("PetBillboard", true)
+    if existingLabel then existingLabel:Destroy() end
+    local existingHighlight = eggModel:FindFirstChild("ESPHighlight")
+    if existingHighlight then existingHighlight:Destroy() end
+    if not espEnabled then return end
+
+    local basePart = eggModel:FindFirstChildWhichIsA("BasePart")
+    if not basePart then return end
+
+    local hatchReady = true
+    local hatchTime = eggModel:FindFirstChild("HatchTime")
+    local readyFlag = eggModel:FindFirstChild("ReadyToHatch")
+
+    if hatchTime and hatchTime:IsA("NumberValue") and hatchTime.Value > 0 then
+        hatchReady = false
+    elseif readyFlag and readyFlag:IsA("BoolValue") and not readyFlag.Value then
+        hatchReady = false
+    end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "PetBillboard"
+    billboard.Size = UDim2.new(0, 270, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 4.5, 0)
+    billboard.AlwaysOnTop = true
+    billboard.MaxDistance = 500
+    billboard.Parent = basePart
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = eggModel.Name .. " | " .. petName
+    if not hatchReady then
+        label.Text = eggModel.Name .. " | " .. petName .. " (Not Ready)"
+        label.TextColor3 = Color3.fromRGB(160, 160, 160)
+        label.TextStrokeTransparency = 0.5
+    else
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextStrokeTransparency = 0
+    end
+    label.TextScaled = true
+    label.Font = Enum.Font.FredokaOne
+    label.Parent = billboard
+
+    glitchLabelEffect(label)
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "ESPHighlight"
+    highlight.FillColor = Color3.fromRGB(255, 200, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.7
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Adornee = eggModel
+    highlight.Parent = eggModel
+end
+
+local function removeEggESP(eggModel)
+    local label = eggModel:FindFirstChild("PetBillboard", true)
+    if label then label:Destroy() end
+    local highlight = eggModel:FindFirstChild("ESPHighlight")
+    if highlight then highlight:Destroy() end
+end
+
+local function getPlayerGardenEggs(radius)
+    local eggs = {}
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return eggs end
+
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj:IsA("Model") and petTable[obj.Name] then
+            local dist = (obj:GetModelCFrame().Position - root.Position).Magnitude
+            if dist <= (radius or 60) then
+                if not truePetMap[obj] then
+                    local pets = petTable[obj.Name]
+                    local chosen = pets[math.random(1, #pets)]
+                    truePetMap[obj] = chosen
+                end
+                table.insert(eggs, obj)
+            end
+        end
+    end
+    return eggs
+end
+
+local function randomizeNearbyEggs()
+    local eggs = getPlayerGardenEggs(60)
+    for _, egg in ipairs(eggs) do
+        local pets = petTable[egg.Name]
+        local chosen = pets[math.random(1, #pets)]
+        truePetMap[egg] = chosen
+        applyEggESP(egg, chosen)
+    end
+    print("Randomized", #eggs, "eggs.")
+end
+
+local function countdownAndRandomize(button)
+    for i = 10, 1, -1 do
+        button.Text = "Randomizing in: " .. i
+        wait(1)
+    end
+    randomizeNearbyEggs()
+    button.Text = "Randomize Pets"
+end
+
+-- GUI Setup
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "KuniPetHatch"
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 280, 0, 320)
+frame.Position = UDim2.new(0, 20, 0, 100)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+local function createButton(text, y, color)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -20, 0, 38)
+	btn.Position = UDim2.new(0, 10, 0, y)
+	btn.BackgroundColor3 = color
+	btn.Text = text
+	btn.Font = Enum.Font.FredokaOne
+	btn.TextSize = 16
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.AutoButtonColor = false
+
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	local stroke = Instance.new("UIStroke", btn)
+	stroke.Color = Color3.fromRGB(50, 50, 50)
+	stroke.Thickness = 1.2
+
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {
+			BackgroundColor3 = color:Lerp(Color3.new(1,1,1), 0.1)
+		}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {
+			BackgroundColor3 = color
+		}):Play()
+	end)
+
+	btn.Parent = frame
+	return btn
+end
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 32)
+title.BackgroundTransparency = 1
+title.Text = "Kuni Hub Scripts"
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 20
+title.TextColor3 = Color3.new(1, 1, 1)
+
+-- Dragging main frame
+local drag = Instance.new("TextButton", title)
+drag.Size = UDim2.new(1, 0, 1, 0)
+drag.Text = ""
+drag.BackgroundTransparency = 1
+local dragging, offset
+drag.MouseButton1Down:Connect(function()
+	dragging = true
+	offset = Vector2.new(mouse.X - frame.Position.X.Offset, mouse.Y - frame.Position.Y.Offset)
+end)
+UserInputService.InputEnded:Connect(function()
+	dragging = false
+end)
+RunService.RenderStepped:Connect(function()
+	if dragging then
+		frame.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+	end
+end)
+
+-- Buttons
+local randomBtn = createButton("Randomize Pets", 40, Color3.fromRGB(80, 0, 120))
+randomBtn.MouseButton1Click:Connect(function()
+    countdownAndRandomize(randomBtn)
+end)
+
+local toggleBtn = createButton("Toggle ESP", 90, Color3.fromRGB(128, 80, 80))
+toggleBtn.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    toggleBtn.Text = espEnabled and "Toggle ESP (ON)" or "Toggle ESP (OFF)"
+    for _, egg in pairs(getPlayerGardenEggs(60)) do
+        if espEnabled then
+            applyEggESP(egg, truePetMap[egg])
+        else
+            removeEggESP(egg)
+        end
+    end
+end)
+
+local autoBtn = createButton("Auto Randomize", 140, Color3.fromRGB(100, 100, 200))
+local autoRunning = false
+autoBtn.MouseButton1Click:Connect(function()
+    autoRunning = not autoRunning
+    autoBtn.Text = autoRunning and "Auto Randomize (ON)" or "Auto Randomize (OFF)"
+    coroutine.wrap(function()
+        while autoRunning do
+            countdownAndRandomize(randomBtn)
+            wait(1)
+        end
+    end)()
+end)
+
+local loadAgeBtn = createButton("Load Pet Age 50 Script", 190, Color3.fromRGB(50, 50, 150))
+loadAgeBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/PetAgeChanger"))()
+end)
+
+local mutationBtn = createButton("Open Pet Mutation Finder", 240, Color3.fromRGB(150, 60, 90))
+mutationBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
+end)
+
+-- Footer
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, 0, 0, 20)
+credit.Position = UDim2.new(0, 0, 0, 300)
+credit.BackgroundTransparency = 1
+credit.Text = "Made by Kuni"
+credit.Font = Enum.Font.FredokaOne
+credit.TextSize = 14
+credit.TextColor3 = Color3.fromRGB(180, 180, 180)
+
+-- ✅ Minimize Button + Tappable Icon
+local minimized = false
+
+local miniBtn = Instance.new("TextButton")
+miniBtn.Size = UDim2.new(0, 28, 0, 28)
+miniBtn.Position = UDim2.new(1, -34, 0, 4)
+miniBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+miniBtn.Text = "-"
+miniBtn.Font = Enum.Font.FredokaOne
+miniBtn.TextSize = 20
+miniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+miniBtn.Parent = frame
+miniBtn.AutoButtonColor = false
+Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1, 0)
+
+local minimizedLabel = Instance.new("TextButton")
+minimizedLabel.Size = UDim2.new(0, 160, 0, 36)
+minimizedLabel.Position = UDim2.new(0, 20, 0, 100)
+minimizedLabel.Text = "Kuni Hub"
+minimizedLabel.Font = Enum.Font.FredokaOne
+minimizedLabel.TextSize = 20
+minimizedLabel.TextColor3 = Color3.new(1, 1, 1)
+minimizedLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+minimizedLabel.Visible = false
+minimizedLabel.Parent = gui
+Instance.new("UICorner", minimizedLabel).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", minimizedLabel).Color = Color3.fromRGB(60, 60, 60)
+
+local draggingMini = false
+local movedDuringDrag = false
+local dragThreshold = 5
+
+minimizedLabel.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		draggingMini = true
+		movedDuringDrag = false
+		offset = Vector2.new(input.Position.X - minimizedLabel.Position.X.Offset, input.Position.Y - minimizedLabel.Position.Y.Offset)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if draggingMini then
+		draggingMini = false
+		if not movedDuringDrag then
+			frame.Visible = true
+			minimizedLabel.Visible = false
+			minimized = false
+		end
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if draggingMini and minimized then
+		local newPos = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+		local delta = (minimizedLabel.Position.X.Offset - newPos.X.Offset)^2 + (minimizedLabel.Position.Y.Offset - newPos.Y.Offset)^2
+		if delta > dragThreshold then
+			movedDuringDrag = true
+		end
+		minimizedLabel.Position = newPos
+	end
+end)
+
+local function toggleMinimize()
+	minimized = not minimized
+	frame.Visible = not minimized
+	minimizedLabel.Visible = minimized
+end
+
+miniBtn.MouseButton1Click:Connect(toggleMinimize)
