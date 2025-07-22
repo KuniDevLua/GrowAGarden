@@ -144,7 +144,7 @@ local function countdownAndRandomize(button)
     button.Text = "Randomize Pets"
 end
 
--- 🧱 GUI Setup
+-- GUI Setup
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "KuniPetHatch"
 
@@ -187,7 +187,7 @@ local function createButton(text, y, color)
 	return btn
 end
 
--- 🪄 Title
+-- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 32)
 title.BackgroundTransparency = 1
@@ -196,7 +196,7 @@ title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
 title.TextColor3 = Color3.new(1, 1, 1)
 
--- 🖱 Drag
+-- Drag
 local drag = Instance.new("TextButton", title)
 drag.Size = UDim2.new(1, 0, 1, 0)
 drag.Text = ""
@@ -257,7 +257,7 @@ mutationBtn.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
 end)
 
--- 🏷 Credit
+-- Footer Credit
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, 0, 0, 20)
 credit.Position = UDim2.new(0, 0, 0, 300)
@@ -266,3 +266,55 @@ credit.Text = "Made by Kuni"
 credit.Font = Enum.Font.FredokaOne
 credit.TextSize = 14
 credit.TextColor3 = Color3.fromRGB(180, 180, 180)
+
+-- Minimize Button + Minimized Icon
+local minimized = false
+
+local miniBtn = Instance.new("TextButton")
+miniBtn.Size = UDim2.new(0, 28, 0, 28)
+miniBtn.Position = UDim2.new(1, -34, 0, 4)
+miniBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+miniBtn.Text = "-"
+miniBtn.Font = Enum.Font.FredokaOne
+miniBtn.TextSize = 20
+miniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+miniBtn.Parent = frame
+miniBtn.AutoButtonColor = false
+Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1, 0)
+
+local minimizedLabel = Instance.new("TextButton")
+minimizedLabel.Size = UDim2.new(0, 160, 0, 36)
+minimizedLabel.Position = UDim2.new(0, 20, 0, 100)
+minimizedLabel.Text = "Kuni Hub"
+minimizedLabel.Font = Enum.Font.FredokaOne
+minimizedLabel.TextSize = 20
+minimizedLabel.TextColor3 = Color3.new(1, 1, 1)
+minimizedLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+minimizedLabel.Visible = false
+minimizedLabel.Parent = gui
+Instance.new("UICorner", minimizedLabel).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", minimizedLabel).Color = Color3.fromRGB(60, 60, 60)
+
+local miniDrag = Instance.new("TextButton", minimizedLabel)
+miniDrag.Size = UDim2.new(1, 0, 1, 0)
+miniDrag.Text = ""
+miniDrag.BackgroundTransparency = 1
+miniDrag.MouseButton1Down:Connect(function()
+	dragging = true
+	offset = Vector2.new(mouse.X - minimizedLabel.Position.X.Offset, mouse.Y - minimizedLabel.Position.Y.Offset)
+end)
+
+RunService.RenderStepped:Connect(function()
+	if dragging and minimized then
+		minimizedLabel.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+	end
+end)
+
+local function toggleMinimize()
+	minimized = not minimized
+	frame.Visible = not minimized
+	minimizedLabel.Visible = minimized
+end
+
+miniBtn.MouseButton1Click:Connect(toggleMinimize)
+minimizedLabel.MouseButton1Click:Connect(toggleMinimize)
