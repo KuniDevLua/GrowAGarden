@@ -1,0 +1,37 @@
+‎local Players = game:GetService("Players")
+‎local player = Players.LocalPlayer
+‎
+‎-- Function to show fake kick GUI
+‎local function fakeKick(message)
+‎	local gui = Instance.new("ScreenGui")
+‎	gui.Name = "FakeKickGui"
+‎	gui.ResetOnSpawn = false
+‎	gui.Parent = player:WaitForChild("PlayerGui")
+‎
+‎	local frame = Instance.new("Frame")
+‎	frame.Size = UDim2.new(1, 0, 1, 0)
+‎	frame.BackgroundColor3 = Color3.new(0, 0, 0)
+‎	frame.Parent = gui
+‎
+‎	local label = Instance.new("TextLabel")
+‎	label.Size = UDim2.new(1, 0, 1, 0)
+‎	label.BackgroundTransparency = 1
+‎	label.Text = "You have been kicked from this experience:\n" .. (message or "Wrong Executor used")
+‎	label.TextColor3 = Color3.new(1, 0.2, 0.2)
+‎	label.TextScaled = true
+‎	label.Font = Enum.Font.SourceSansBold
+‎	label.TextWrapped = true
+‎	label.Parent = frame
+‎end
+‎
+‎-- Function to detect if using Delta executor
+‎local function isDelta()
+‎	local getExec = identifyexecutor or getexecutorname or function() return "" end
+‎	local execName = getExec()
+‎	return typeof(execName) == "string" and execName:lower():find("delta")
+‎end
+‎
+‎-- Run only if Delta is detected
+‎if isDelta() then
+‎	fakeKick("Don't use Delta — you might get banned.\nUse a safer executor like KRNL, Arceus, Fluxus, or others.")
+‎end
