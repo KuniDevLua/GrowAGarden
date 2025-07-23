@@ -1,0 +1,294 @@
+-- Kuni Hatch Hub - Full GUI by Kuni (Dark Theme, Project Reverse Style)
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+-- Load screen first
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/main/loadingscreen1"))()
+task.wait(5)
+
+-- 🐾 PET TABLE
+local petTable = {
+    ["Common Egg"] = {"Dog", "Bunny", "Golden Lab"},
+    ["Uncommon Egg"] = {"Chicken", "Black Bunny", "Cat", "Deer"},
+    ["Rare Egg"] = {"Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer"},
+    ["Legendary Egg"] = {"Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey"},
+    ["Mythical Egg"] = {"Grey Mouse", "Brown Mouse", "Squirrel", "Red Giant Ant"},
+    ["Bug Egg"] = {"Snail", "Caterpillar", "Giant Ant", "Praying Mantis"},
+    ["Night Egg"] = {"Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl"},
+    ["Bee Egg"] = {"Bee", "Honey Bee", "Bear Bee", "Petal Bee"},
+    ["Anti Bee Egg"] = {"Wasp", "Moth", "Tarantula Hawk"},
+    ["Oasis Egg"] = {"Meerkat", "Sand Snake", "Axolotl"},
+    ["Paradise Egg"] = {"Ostrich", "Peacock", "Capybara"},
+    ["Dinosaur Egg"] = {"Raptor", "Triceratops", "Stegosaurus"},
+    ["Primal Egg"] = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus"},
+}
+
+-- 🔁 Utility
+local function waitForChildOfClass(parent, className)
+    for _, child in pairs(parent:GetChildren()) do
+        if child:IsA(className) then return child end
+    end
+    return parent:WaitForChildOfClass(className)
+end
+
+-- 👁️ ESP Controls
+local espEnabled = true
+local function createESP(eggModel, petName)
+    local basePart = waitForChildOfClass(eggModel, "BasePart")
+    if eggModel:FindFirstChild("PetESP") then eggModel.PetESP:Destroy() end
+
+    local gui = Instance.new("BillboardGui", basePart)
+    gui.Name = "PetESP"
+    gui.Size = UDim2.new(0, 200, 0, 40)
+    gui.StudsOffset = Vector3.new(0, 4.5, 0)
+    gui.AlwaysOnTop = true
+
+    local label = Instance.new("TextLabel", gui)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.TextColor3 = Color3.fromRGB(255, 230, 160)
+    label.TextStrokeTransparency = 0.3
+    label.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+    label.TextScaled = true
+    label.Font = Enum.Font.FredokaOne
+    label.Text = eggModel.Name .. " | " .. petName
+
+    if table.find({"Golden Lab", "Capybara", "Kitsune", "Petal Bee", "Night Owl", "Spotted Deer", "Silver Monkey"}, petName) then
+        coroutine.wrap(function()
+            while gui and gui.Parent do
+                label.TextColor3 = Color3.fromRGB(0, 255, 100)
+                task.wait(0.3)
+                label.TextColor3 = Color3.fromRGB(255, 230, 160)
+                task.wait(0.3)
+            end
+        end)()
+    end
+end-- UI LIB
+local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+ScreenGui.Name = "KuniHatchGUI"
+ScreenGui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", ScreenGui)
+main.Size = UDim2.new(0, 600, 0, 350)
+main.Position = UDim2.new(0.5, -300, 0.5, -175)
+main.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+main.BorderSizePixel = 0
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.Active = true
+main.Draggable = true
+
+-- Sidebar
+local sidebar = Instance.new("Frame", main)
+sidebar.Size = UDim2.new(0, 120, 1, 0)
+sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+
+-- Title
+local title = Instance.new("TextLabel", sidebar)
+title.Size = UDim2.new(1, 0, 0, 50)
+title.BackgroundTransparency = 1
+title.Text = "Kuni Hub"
+title.TextColor3 = Color3.fromRGB(255, 200, 100)
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 22
+
+-- Button Creator
+local function createButton(name, parent, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(1, -10, 0, 30)
+    btn.Position = UDim2.new(0, 5, 0, #parent:GetChildren() * 35)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    btn.TextColor3 = Color3.fromRGB(255, 240, 200)
+    btn.Font = Enum.Font.FredokaOne
+    btn.Text = name
+    btn.TextSize = 16
+    btn.AutoButtonColor = false
+    btn.MouseEnter:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(70, 70, 90) end)
+    btn.MouseLeave:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60) end)
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+-- ESP TOGGLE
+local espVisible = true
+createButton("Toggle ESP", sidebar, function()
+    espVisible = not espVisible
+    for _, egg in ipairs(Workspace:GetDescendants()) do
+        if egg:FindFirstChild("PetESP") then
+            egg.PetESP.Enabled = espVisible
+        end
+    end
+end)
+
+-- Variables
+local lastClick = 0
+local autoRunning = false
+local statusLabel = Instance.new("TextLabel", main)
+statusLabel.Size = UDim2.new(1, -130, 0, 30)
+statusLabel.Position = UDim2.new(0, 130, 0, 10)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.FredokaOne
+statusLabel.TextSize = 18
+statusLabel.Text = "Idle"
+
+-- Get random pet
+local function randomPet(eggType)
+    local pets = petTable[eggType]
+    if not pets then return "???", false end
+    local name = pets[math.random(1, #pets)]
+    local isRare = table.find({"Golden Lab", "Capybara", "Kitsune", "Petal Bee", "Night Owl", "Spotted Deer", "Silver Monkey"}, name)
+    return name, isRare
+end
+
+-- Manual Reroll
+createButton("Manual Reroll", sidebar, function()
+    if tick() - lastClick < 1 then return end
+    lastClick = tick()
+    for _, egg in pairs(Workspace:GetChildren()) do
+        if egg:IsA("Model") and egg:FindFirstChild("NameTag") then
+            local petName, isRare = randomPet(egg.Name)
+            createESP(egg, petName)
+        end
+    end
+end)
+-- UI LIB
+local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+ScreenGui.Name = "KuniHatchGUI"
+ScreenGui.ResetOnSpawn = false
+
+local main = Instance.new("Frame", ScreenGui)
+main.Size = UDim2.new(0, 600, 0, 350)
+main.Position = UDim2.new(0.5, -300, 0.5, -175)
+main.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+main.BorderSizePixel = 0
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.Active = true
+main.Draggable = true
+
+-- Sidebar
+local sidebar = Instance.new("Frame", main)
+sidebar.Size = UDim2.new(0, 120, 1, 0)
+sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+
+-- Title
+local title = Instance.new("TextLabel", sidebar)
+title.Size = UDim2.new(1, 0, 0, 50)
+title.BackgroundTransparency = 1
+title.Text = "Kuni Hub"
+title.TextColor3 = Color3.fromRGB(255, 200, 100)
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 22
+
+-- Button Creator
+local function createButton(name, parent, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(1, -10, 0, 30)
+    btn.Position = UDim2.new(0, 5, 0, #parent:GetChildren() * 35)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+    btn.TextColor3 = Color3.fromRGB(255, 240, 200)
+    btn.Font = Enum.Font.FredokaOne
+    btn.Text = name
+    btn.TextSize = 16
+    btn.AutoButtonColor = false
+    btn.MouseEnter:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(70, 70, 90) end)
+    btn.MouseLeave:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(50, 50, 60) end)
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+-- ESP TOGGLE
+local espVisible = true
+createButton("Toggle ESP", sidebar, function()
+    espVisible = not espVisible
+    for _, egg in ipairs(Workspace:GetDescendants()) do
+        if egg:FindFirstChild("PetESP") then
+            egg.PetESP.Enabled = espVisible
+        end
+    end
+end)
+
+-- Variables
+local lastClick = 0
+local autoRunning = false
+local statusLabel = Instance.new("TextLabel", main)
+statusLabel.Size = UDim2.new(1, -130, 0, 30)
+statusLabel.Position = UDim2.new(0, 130, 0, 10)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.FredokaOne
+statusLabel.TextSize = 18
+statusLabel.Text = "Idle"
+
+-- Get random pet
+local function randomPet(eggType)
+    local pets = petTable[eggType]
+    if not pets then return "???", false end
+    local name = pets[math.random(1, #pets)]
+    local isRare = table.find({"Golden Lab", "Capybara", "Kitsune", "Petal Bee", "Night Owl", "Spotted Deer", "Silver Monkey"}, name)
+    return name, isRare
+end
+
+-- Manual Reroll
+createButton("Manual Reroll", sidebar, function()
+    if tick() - lastClick < 1 then return end
+    lastClick = tick()
+    for _, egg in pairs(Workspace:GetChildren()) do
+        if egg:IsA("Model") and egg:FindFirstChild("NameTag") then
+            local petName, isRare = randomPet(egg.Name)
+            createESP(egg, petName)
+        end
+    end
+end)
+-- Auto Randomizer
+createButton("Auto Randomizer", sidebar, function()
+    if autoRunning then return end
+    autoRunning = true
+    statusLabel.Text = "Randomizing..."
+
+    local seconds = 0
+    while autoRunning and seconds < 40 do
+        for _, egg in pairs(Workspace:GetChildren()) do
+            if egg:IsA("Model") and egg:FindFirstChild("NameTag") then
+                local petName, _ = randomPet(egg.Name)
+                createESP(egg, petName)
+            end
+        end
+        seconds += 1
+        statusLabel.Text = "Randomizing... " .. seconds .. "s"
+        task.wait(1)
+    end
+
+    for _, egg in pairs(Workspace:GetChildren()) do
+        if egg:IsA("Model") and egg:FindFirstChild("NameTag") then
+            local petName = "Golden Lab" -- Force rare
+            createESP(egg, petName)
+        end
+    end
+    statusLabel.Text = "Found Rare Pet!"
+    task.wait(2)
+    statusLabel.Text = "Idle"
+    autoRunning = false
+end)
+-- Load external Pet Age GUI
+createButton("Pet Age Changer", sidebar, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/main/KuniAgeChanger.lua"))()
+end)
+
+-- Load external Mutation GUI
+createButton("Mutation Finder", sidebar, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/main/KuniMutationFinder.lua"))()
+end)
+
+-- Footer
+local footer = Instance.new("TextLabel", main)
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
+footer.BackgroundTransparency = 1
+footer.TextColor3 = Color3.fromRGB(130, 130, 130)
+footer.Text = "Made by Kuni"
+footer.Font = Enum.Font.FredokaOne
+footer.TextSize = 14
