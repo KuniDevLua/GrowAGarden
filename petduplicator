@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
@@ -82,18 +83,18 @@ footer.BackgroundTransparency = 1
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 
--- Function to get equipped pet tool
+-- Get equipped pet
 local function getEquippedPetTool()
 	character = player.Character or player.CharacterAdded:Wait()
-	for _, child in pairs(character:GetChildren()) do
-		if child:IsA("Tool") and child.Name:find("Age") then
-			return child
+	for _, tool in pairs(character:GetChildren()) do
+		if tool:IsA("Tool") and tool:FindFirstChild("Handle") then
+			return tool
 		end
 	end
 	return nil
 end
 
--- Update GUI pet name
+-- Update pet label
 local function updateGUI()
 	local pet = getEquippedPetTool()
 	if pet then
@@ -103,24 +104,96 @@ local function updateGUI()
 	end
 end
 
--- Pet Duplication Logic (no "Copy" text)
+-- Small floating loading bar
+local function createLoadingBar()
+	local loadingFrame = Instance.new("Frame", screenGui)
+	loadingFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+	loadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	loadingFrame.Size = UDim2.new(0, 260, 0, 70)
+	loadingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	loadingFrame.ZIndex = 20
+	Instance.new("UICorner", loadingFrame)
+
+	local label = Instance.new("TextLabel", loadingFrame)
+	label.Text = "Duplicating pet, please wait..."
+	label.Font = Enum.Font.FredokaOne
+	label.TextSize = 16
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.BackgroundTransparency = 1
+	label.Size = UDim2.new(1, 0, 0, 30)
+	label.Position = UDim2.new(0, 0, 0, 6)
+	label.ZIndex = 21
+
+	local barBG = Instance.new("Frame", loadingFrame)
+	barBG.Position = UDim2.new(0.05, 0, 0.65, 0)
+	barBG.Size = UDim2.new(0.9, 0, 0.2, 0)
+	barBG.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	barBG.ZIndex = 21
+	Instance.new("UICorner", barBG)
+
+	local bar = Instance.new("Frame", barBG)
+	bar.BackgroundColor3 = Color3.fromRGB(130, 100, 255)
+	bar.Size = UDim2.new(0, 0, 1, 0)
+	bar.ZIndex = 22
+	Instance.new("UICorner", bar)
+
+	-- Sound effect
+	local sound = Instance.new("Sound", loadingFrame)
+	sound.SoundId = "rbxassetid://9118823106" -- 🔊 Change if needed
+	sound.Volume = 1
+	sound:Play()
+
+	return loadingFrame, bar, sound
+end
+
+-- Error message popup
+local function showErrorMessage(text)
+	local errorLabel = Instance.new("TextLabel", screenGui)
+	errorLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	errorLabel.Position = UDim2.new(0.5, 0, 0.45, 0)
+	errorLabel.Size = UDim2.new(0, 250, 0, 40)
+	errorLabel.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+	errorLabel.Text = text
+	errorLabel.Font = Enum.Font.FredokaOne
+	errorLabel.TextSize = 16
+	errorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	errorLabel.ZIndex = 30
+	Instance.new("UICorner", errorLabel)
+
+	task.delay(2.5, function()
+		errorLabel:Destroy()
+	end)
+end
+
+-- Main duplicate logic
 dupeButton.MouseButton1Click:Connect(function()
-	local tool = getEquippedPetTool()
-	if tool then
-		local clone = tool:Clone()
-		clone.Name = tool.Name -- exact same name, no "(Copy x)"
-		clone.Parent = player.Backpack
-		dupeButton.Text = "Pet Duplicated!"
-		task.wait(1.5)
-		dupeButton.Text = "Duplicate Pet"
-	else
-		dupeButton.Text = "No Pet Equipped!"
-		task.wait(2)
-		dupeButton.Text = "Duplicate Pet"
+	local equipped = getEquippedPetTool()
+	if not equipped then
+		showErrorMessage("No Equipped Pet Detected")
+		return
 	end
+
+	local loader, bar, sound = createLoadingBar()
+	local duration = 8 -- 8 second loading
+	local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+	local tween = TweenService:Create(bar, tweenInfo, {Size = UDim2.new(1, 0, 1, 0)})
+	tween:Play()
+
+	task.wait(duration)
+
+	loader:Destroy()
+	if sound then sound:Destroy() end
+
+	local clone = equipped:Clone()
+	clone.Name = equipped.Name
+	clone.Parent = player.Backpack
+	dupeButton.Text = "Pet Duplicated!"
+
+	task.wait(2)
+	dupeButton.Text = "Duplicate Pet"
 end)
 
--- Auto-refresh pet display
+-- Keep pet name updated
 task.spawn(function()
 	while true do
 		updateGUI()
