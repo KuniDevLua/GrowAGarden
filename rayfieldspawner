@@ -1,0 +1,91 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RayfieldFakeSpawner"
+screenGui.Parent = playerGui
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 400, 0, 200)
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.Parent = screenGui
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 10)
+
+local title = Instance.new("TextLabel")
+title.Parent = mainFrame
+title.Size = UDim2.new(1, 0, 0, 50)
+title.Position = UDim2.new(0.5, 0, 0.2, 0)
+title.AnchorPoint = Vector2.new(0.5, 0)
+title.BackgroundTransparency = 1
+title.Text = "Rayfield Dark Spawner"
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 24
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Center
+
+local executeButton = Instance.new("TextButton")
+executeButton.Parent = mainFrame
+executeButton.Size = UDim2.new(0.8, 0, 0, 40)
+executeButton.Position = UDim2.new(0.5, 0, 0.65, 0)
+executeButton.AnchorPoint = Vector2.new(0.5, 0.5)
+executeButton.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+executeButton.Text = "EXECUTE RAYFIELD SPAWNER"
+executeButton.Font = Enum.Font.FredokaOne
+executeButton.TextSize = 18
+executeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", executeButton)
+
+local loadingFrame = Instance.new("Frame")
+loadingFrame.Size = UDim2.new(1, 0, 1, 0)
+loadingFrame.Position = UDim2.new(0, 0, 0, 0)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+loadingFrame.Visible = false
+loadingFrame.Parent = screenGui
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Parent = loadingFrame
+loadingText.Size = UDim2.new(0.8, 0, 0, 40)
+loadingText.Position = UDim2.new(0.5, 0, 0.4, 0)
+loadingText.AnchorPoint = Vector2.new(0.5, 0.5)
+loadingText.BackgroundTransparency = 1
+loadingText.Text = "Executing Rayfield please wait..."
+loadingText.Font = Enum.Font.FredokaOne
+loadingText.TextSize = 20
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local progressBarBack = Instance.new("Frame")
+progressBarBack.Size = UDim2.new(0.6, 0, 0, 20)
+progressBarBack.Position = UDim2.new(0.5, 0, 0.55, 0)
+progressBarBack.AnchorPoint = Vector2.new(0.5, 0.5)
+progressBarBack.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+progressBarBack.Parent = loadingFrame
+Instance.new("UICorner", progressBarBack)
+
+local progressBar = Instance.new("Frame")
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(80, 180, 80)
+progressBar.Parent = progressBarBack
+Instance.new("UICorner", progressBar)
+
+executeButton.MouseButton1Click:Connect(function()
+	mainFrame:Destroy()
+	loadingFrame.Visible = true
+
+	local duration = 15
+	local startTime = tick()
+
+	while tick() - startTime < duration do
+		local elapsed = tick() - startTime
+		local percent = math.clamp(elapsed / duration, 0, 1)
+		progressBar:TweenSize(UDim2.new(percent, 0, 1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0.1, true)
+		wait(0.1)
+	end
+
+	loadingText.Text = "Rayfield has been executed ✅"
+	wait(2)
+	screenGui:Destroy() -- Totally remove GUI after execution
+end)
