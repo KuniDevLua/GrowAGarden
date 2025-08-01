@@ -1,52 +1,48 @@
--- Kuni Hub Premium GUI compact & VIP font + 2 RGB buttons + glowing border + draggable + Minimize & Exit
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
 
+-- Create GUI in PlayerGui instead of CoreGui (Delta fix)
 local gui = Instance.new("ScreenGui")
 gui.Name = "KuniHubPremiumGUI"
-pcall(function()
-    gui.Parent = game:GetService("CoreGui")
-end)
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 220, 0, 130) -- slightly bigger for title, buttons, footer
+frame.Size = UDim2.new(0, 220, 0, 130)
 frame.Position = UDim2.new(0.5, -110, 0.5, -65)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BackgroundTransparency = 0.1
 frame.BorderSizePixel = 0
 frame.Parent = gui
 
-local corner = Instance.new("UICorner", frame)
-corner.CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- Glowing RGB outline frame
-local glowOutline = Instance.new("Frame")
-glowOutline.Parent = frame
-glowOutline.Size = UDim2.new(1, 8, 1, 8)
-glowOutline.Position = UDim2.new(0, -4, 0, -4)
-glowOutline.BackgroundColor3 = Color3.fromHSV(0,1,1)
-glowOutline.BorderSizePixel = 0
-glowOutline.ZIndex = 0
+-- RGB Glow border
+local glow = Instance.new("Frame")
+glow.Size = UDim2.new(1, 8, 1, 8)
+glow.Position = UDim2.new(0, -4, 0, -4)
+glow.BackgroundColor3 = Color3.fromHSV(0, 1, 1)
+glow.BorderSizePixel = 0
+glow.ZIndex = 0
+glow.Parent = frame
+Instance.new("UICorner", glow).CornerRadius = UDim.new(0, 16)
 
-local glowCorner = Instance.new("UICorner", glowOutline)
-glowCorner.CornerRadius = UDim.new(0, 16)
-
-local TweenService = game:GetService("TweenService")
-
--- Animate glow color HSV cycling
+-- Animate glow
 spawn(function()
-    local hsv = 0
+    local hue = 0
     while gui.Parent do
-        hsv = hsv + 0.007
-        if hsv > 1 then hsv = 0 end
-        glowOutline.BackgroundColor3 = Color3.fromHSV(hsv, 1, 1)
+        hue = (hue + 0.007) % 1
+        glow.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
         wait(0.03)
     end
 end)
 
--- Title label
+-- Title
 local title = Instance.new("TextLabel")
-title.Parent = frame
-title.Size = UDim2.new(1, -70, 0, 32) -- enough height for VIP look font
+title.Size = UDim2.new(1, -70, 0, 32)
 title.Position = UDim2.new(0, 10, 0, 10)
 title.BackgroundTransparency = 1
 title.Text = "Kuni Hub"
@@ -55,10 +51,10 @@ title.Font = Enum.Font.GothamBlack
 title.TextSize = 22
 title.TextStrokeTransparency = 0.6
 title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
 
--- Footer label
+-- Footer
 local footer = Instance.new("TextLabel")
-footer.Parent = frame
 footer.Size = UDim2.new(1, 0, 0, 16)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
@@ -67,16 +63,17 @@ footer.TextColor3 = Color3.fromRGB(160, 160, 160)
 footer.Font = Enum.Font.Gotham
 footer.TextSize = 12
 footer.TextXAlignment = Enum.TextXAlignment.Center
+footer.Parent = frame
 
-local TweenInOut = function(obj, goal, duration)
+-- Tween helper
+local function TweenInOut(obj, goal, duration)
     TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal):Play()
 end
 
--- Create button function with smaller height 26px for better visibility
+-- Create button function
 local function createButton(parent, posY, text)
     local btn = Instance.new("TextButton")
-    btn.Parent = parent
-    btn.Size = UDim2.new(1, 0, 0, 26) -- slightly bigger buttons for easier click
+    btn.Size = UDim2.new(1, 0, 0, 26)
     btn.Position = UDim2.new(0, 0, 0, posY)
     btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     btn.BorderSizePixel = 0
@@ -85,10 +82,9 @@ local function createButton(parent, posY, text)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 15
     btn.ZIndex = 1
-    local btnCorner = Instance.new("UICorner", btn)
-    btnCorner.CornerRadius = UDim.new(0, 10)
+    btn.Parent = parent
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
-    -- Hover effect
     btn.MouseEnter:Connect(function()
         TweenInOut(btn, {BackgroundTransparency = 0.3}, 0.2)
     end)
@@ -96,13 +92,11 @@ local function createButton(parent, posY, text)
         TweenInOut(btn, {BackgroundTransparency = 0}, 0.2)
     end)
 
-    -- RGB glow animation on button background
     spawn(function()
-        local hsv = 0
+        local hue = 0
         while gui.Parent and btn.Parent do
-            hsv = hsv + 0.01
-            if hsv > 1 then hsv = 0 end
-            btn.BackgroundColor3 = Color3.fromHSV(hsv, 1, 1)
+            hue = (hue + 0.01) % 1
+            btn.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
             wait(0.03)
         end
     end)
@@ -110,10 +104,11 @@ local function createButton(parent, posY, text)
     return btn
 end
 
+-- Buttons
 local button1 = createButton(frame, 50, "Run Rayfield Dark Spawner")
 local button2 = createButton(frame, 82, "Run Project Reverse")
 
--- Button1 click (Spawner script)
+-- Button1 action
 button1.MouseButton1Click:Connect(function()
     button1.Text = "Loading..."
     button1.BackgroundTransparency = 0.5
@@ -121,30 +116,22 @@ button1.MouseButton1Click:Connect(function()
         local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
         Spawner.Load()
     end)
-    if success then
-        button1.Text = "Loaded!"
-    else
-        button1.Text = "Failed!"
-        warn("[Kuni Hub] Error: " .. tostring(err))
-    end
+    button1.Text = success and "Loaded!" or "Failed!"
+    if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
     wait(2)
     button1.Text = "Run Rayfield Dark Spawner"
     button1.BackgroundTransparency = 0
 end)
 
--- Button2 click (Gag Visual script)
+-- Button2 action
 button2.MouseButton1Click:Connect(function()
     button2.Text = "Loading..."
     button2.BackgroundTransparency = 0.5
     local success, err = pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua", true))("discord.gg/csxu2nCkw9")
     end)
-    if success then
-        button2.Text = "Loaded!"
-    else
-        button2.Text = "Failed!"
-        warn("[Kuni Hub] Error: " .. tostring(err))
-    end
+    button2.Text = success and "Loaded!" or "Failed!"
+    if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
     wait(2)
     button2.Text = "Run Project Reverse"
     button2.BackgroundTransparency = 0
@@ -152,7 +139,6 @@ end)
 
 -- Minimize button
 local minBtn = Instance.new("TextButton")
-minBtn.Parent = frame
 minBtn.Size = UDim2.new(0, 26, 0, 22)
 minBtn.Position = UDim2.new(1, -60, 0, 10)
 minBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -161,34 +147,24 @@ minBtn.Text = "–"
 minBtn.Font = Enum.Font.GothamBold
 minBtn.TextSize = 22
 minBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local minCorner = Instance.new("UICorner", minBtn)
-minCorner.CornerRadius = UDim.new(0, 6)
+minBtn.Parent = frame
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 6)
 
-minBtn.MouseEnter:Connect(function()
-    TweenInOut(minBtn, {BackgroundTransparency = 0.3}, 0.2)
-end)
-minBtn.MouseLeave:Connect(function()
-    TweenInOut(minBtn, {BackgroundTransparency = 0}, 0.2)
-end)
+minBtn.MouseEnter:Connect(function() TweenInOut(minBtn, {BackgroundTransparency = 0.3}, 0.2) end)
+minBtn.MouseLeave:Connect(function() TweenInOut(minBtn, {BackgroundTransparency = 0}, 0.2) end)
 
-local buttonsVisible = true
+local visible = true
 minBtn.MouseButton1Click:Connect(function()
-    buttonsVisible = not buttonsVisible
-    button1.Visible = buttonsVisible
-    button2.Visible = buttonsVisible
-    footer.Visible = buttonsVisible
-    if buttonsVisible then
-        minBtn.Text = "–"
-        frame.Size = UDim2.new(0, 220, 0, 130)
-    else
-        minBtn.Text = "+"
-        frame.Size = UDim2.new(0, 220, 0, 45)
-    end
+    visible = not visible
+    button1.Visible = visible
+    button2.Visible = visible
+    footer.Visible = visible
+    minBtn.Text = visible and "–" or "+"
+    frame.Size = visible and UDim2.new(0, 220, 0, 130) or UDim2.new(0, 220, 0, 45)
 end)
 
 -- Exit button
 local exitBtn = Instance.new("TextButton")
-exitBtn.Parent = frame
 exitBtn.Size = UDim2.new(0, 26, 0, 22)
 exitBtn.Position = UDim2.new(1, -30, 0, 10)
 exitBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -197,22 +173,17 @@ exitBtn.Text = "×"
 exitBtn.Font = Enum.Font.GothamBold
 exitBtn.TextSize = 22
 exitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-local exitCorner = Instance.new("UICorner", exitBtn)
-exitCorner.CornerRadius = UDim.new(0, 6)
+exitBtn.Parent = frame
+Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 6)
 
-exitBtn.MouseEnter:Connect(function()
-    TweenInOut(exitBtn, {BackgroundTransparency = 0.3}, 0.2)
-end)
-exitBtn.MouseLeave:Connect(function()
-    TweenInOut(exitBtn, {BackgroundTransparency = 0}, 0.2)
-end)
+exitBtn.MouseEnter:Connect(function() TweenInOut(exitBtn, {BackgroundTransparency = 0.3}, 0.2) end)
+exitBtn.MouseLeave:Connect(function() TweenInOut(exitBtn, {BackgroundTransparency = 0}, 0.2) end)
+exitBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-exitBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
+-- Dragging
+local dragging = false
+local dragStart, startPos
 
--- Draggable frame (PC + mobile)
-local dragging, dragInput, dragStart, startPos
 frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
