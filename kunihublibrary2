@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
--- Create GUI in PlayerGui instead of CoreGui (Delta fix)
+-- GUI setup
 local gui = Instance.new("ScreenGui")
 gui.Name = "KuniHubPremiumGUI"
 gui.ResetOnSpawn = false
@@ -11,16 +11,15 @@ gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 220, 0, 130)
-frame.Position = UDim2.new(0.5, -110, 0.5, -65)
+frame.Size = UDim2.new(0, 220, 0, 162)
+frame.Position = UDim2.new(0.5, -110, 0.5, -81)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BackgroundTransparency = 0.1
 frame.BorderSizePixel = 0
 frame.Parent = gui
-
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- RGB Glow border
+-- RGB glow border
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 8, 1, 8)
 glow.Position = UDim2.new(0, -4, 0, -4)
@@ -30,7 +29,6 @@ glow.ZIndex = 0
 glow.Parent = frame
 Instance.new("UICorner", glow).CornerRadius = UDim.new(0, 16)
 
--- Animate glow
 spawn(function()
     local hue = 0
     while gui.Parent do
@@ -70,7 +68,7 @@ local function TweenInOut(obj, goal, duration)
     TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal):Play()
 end
 
--- Create button function
+-- Create button
 local function createButton(parent, posY, text)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 26)
@@ -104,11 +102,8 @@ local function createButton(parent, posY, text)
     return btn
 end
 
--- Buttons
+-- Button 1
 local button1 = createButton(frame, 50, "Run Rayfield Dark Spawner")
-local button2 = createButton(frame, 82, "Run Project Reverse")
-
--- Button1 action
 button1.MouseButton1Click:Connect(function()
     button1.Text = "Loading..."
     button1.BackgroundTransparency = 0.5
@@ -123,7 +118,8 @@ button1.MouseButton1Click:Connect(function()
     button1.BackgroundTransparency = 0
 end)
 
--- Button2 action
+-- Button 2
+local button2 = createButton(frame, 82, "Run Project Reverse")
 button2.MouseButton1Click:Connect(function()
     button2.Text = "Loading..."
     button2.BackgroundTransparency = 0.5
@@ -137,7 +133,22 @@ button2.MouseButton1Click:Connect(function()
     button2.BackgroundTransparency = 0
 end)
 
--- Minimize button
+-- Button 3 (NEW)
+local button3 = createButton(frame, 114, "Run Kuni Hub Gui")
+button3.MouseButton1Click:Connect(function()
+    button3.Text = "Loading..."
+    button3.BackgroundTransparency = 0.5
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa"))()
+    end)
+    button3.Text = success and "Loaded!" or "Failed!"
+    if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
+    wait(2)
+    button3.Text = "Run Kuni Hub Gui"
+    button3.BackgroundTransparency = 0
+end)
+
+-- Minimize
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 26, 0, 22)
 minBtn.Position = UDim2.new(1, -60, 0, 10)
@@ -158,12 +169,13 @@ minBtn.MouseButton1Click:Connect(function()
     visible = not visible
     button1.Visible = visible
     button2.Visible = visible
+    button3.Visible = visible
     footer.Visible = visible
     minBtn.Text = visible and "–" or "+"
-    frame.Size = visible and UDim2.new(0, 220, 0, 130) or UDim2.new(0, 220, 0, 45)
+    frame.Size = visible and UDim2.new(0, 220, 0, 162) or UDim2.new(0, 220, 0, 45)
 end)
 
--- Exit button
+-- Exit
 local exitBtn = Instance.new("TextButton")
 exitBtn.Size = UDim2.new(0, 26, 0, 22)
 exitBtn.Position = UDim2.new(1, -30, 0, 10)
@@ -180,7 +192,7 @@ exitBtn.MouseEnter:Connect(function() TweenInOut(exitBtn, {BackgroundTransparenc
 exitBtn.MouseLeave:Connect(function() TweenInOut(exitBtn, {BackgroundTransparency = 0}, 0.2) end)
 exitBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
--- Dragging
+-- Draggable
 local dragging = false
 local dragStart, startPos
 
@@ -190,9 +202,7 @@ frame.InputBegan:Connect(function(input)
         dragStart = input.Position
         startPos = frame.Position
         input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
         end)
     end
 end)
