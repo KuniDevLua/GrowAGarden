@@ -173,4 +173,3 @@ frame.InputChanged:Connect(function(input)
                                    startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
-
