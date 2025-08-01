@@ -1,0 +1,176 @@
+-- Kuni Hub Premium GUI with 2 RGB buttons + glowing border + draggable
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KuniHubPremiumGUI"
+pcall(function()
+    gui.Parent = game:GetService("CoreGui")
+end)
+
+-- Main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 280, 0, 190) -- taller to fit 2 buttons
+frame.Position = UDim2.new(0.5, -140, 0.5, -95)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+frame.BackgroundTransparency = 0.1
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 12)
+
+-- Glowing RGB outline frame
+local glowOutline = Instance.new("Frame")
+glowOutline.Parent = frame
+glowOutline.Size = UDim2.new(1, 10, 1, 10)
+glowOutline.Position = UDim2.new(0, -5, 0, -5)
+glowOutline.BackgroundColor3 = Color3.fromHSV(0,1,1)
+glowOutline.BorderSizePixel = 0
+glowOutline.ZIndex = 0
+
+local glowCorner = Instance.new("UICorner", glowOutline)
+glowCorner.CornerRadius = UDim.new(0, 16)
+
+-- Tween glow alpha for smooth effect
+local TweenService = game:GetService("TweenService")
+
+-- Animate glow color HSV cycling
+spawn(function()
+    local hsv = 0
+    while gui.Parent do
+        hsv = hsv + 0.005
+        if hsv > 1 then hsv = 0 end
+        glowOutline.BackgroundColor3 = Color3.fromHSV(hsv, 1, 1)
+        wait(0.03)
+    end
+end)
+
+-- Title label
+local title = Instance.new("TextLabel")
+title.Parent = frame
+title.Size = UDim2.new(1, 0, 0, 35)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.BackgroundTransparency = 1
+title.Text = "✨ Kuni Hub Premium"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+title.TextStrokeTransparency = 0.8
+title.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Footer label
+local footer = Instance.new("TextLabel")
+footer.Parent = frame
+footer.Size = UDim2.new(1, 0, 0, 18)
+footer.Position = UDim2.new(0, 0, 1, -25)
+footer.BackgroundTransparency = 1
+footer.Text = "@kunikunikuni"
+footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.Font = Enum.Font.Gotham
+footer.TextSize = 14
+footer.TextXAlignment = Enum.TextXAlignment.Center
+
+local TweenInOut = function(obj, goal, duration)
+    TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal):Play()
+end
+
+-- Create button function for DRY
+local function createButton(parent, posY, text)
+    local btn = Instance.new("TextButton")
+    btn.Parent = parent
+    btn.Size = UDim2.new(1, 0, 0, 50)
+    btn.Position = UDim2.new(0, 0, 0, posY)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.BorderSizePixel = 0
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 20
+    btn.ZIndex = 1
+    local btnCorner = Instance.new("UICorner", btn)
+    btnCorner.CornerRadius = UDim.new(0, 12)
+
+    -- Hover effect
+    btn.MouseEnter:Connect(function()
+        TweenInOut(btn, {BackgroundTransparency = 0.3}, 0.2)
+    end)
+    btn.MouseLeave:Connect(function()
+        TweenInOut(btn, {BackgroundTransparency = 0}, 0.2)
+    end)
+
+    -- RGB glow animation on button background
+    spawn(function()
+        local hsv = 0
+        while gui.Parent and btn.Parent do
+            hsv = hsv + 0.008
+            if hsv > 1 then hsv = 0 end
+            btn.BackgroundColor3 = Color3.fromHSV(hsv, 1, 1)
+            wait(0.03)
+        end
+    end)
+
+    return btn
+end
+
+local button1 = createButton(frame, 50, "Run Rayfield Dark Spawner")
+local button2 = createButton(frame, 110, "Run Project Reverse")
+
+-- Button1 click (Spawner script)
+button1.MouseButton1Click:Connect(function()
+    button1.Text = "⏳ Loading..."
+    button1.BackgroundTransparency = 0.5
+    local success, err = pcall(function()
+        local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
+        Spawner.Load()
+    end)
+    if success then
+        button1.Text = "✅ Loaded!"
+    else
+        button1.Text = "❌ Failed!"
+        warn("[Kuni Hub] Error: " .. tostring(err))
+    end
+    wait(2)
+    button1.Text = "Run Rayfield Dark Spawner"
+    button1.BackgroundTransparency = 0
+end)
+
+-- Button2 click (Gag Visual script)
+button2.MouseButton1Click:Connect(function()
+    button2.Text = "⏳ Loading..."
+    button2.BackgroundTransparency = 0.5
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua", true))("discord.gg/csxu2nCkw9")
+    end)
+    if success then
+        button2.Text = "✅ Loaded!"
+    else
+        button2.Text = "❌ Failed!"
+        warn("[Kuni Hub] Error: " .. tostring(err))
+    end
+    wait(2)
+    button2.Text = "Run Gag Visual Script"
+    button2.BackgroundTransparency = 0
+end)
+
+-- Draggable frame (PC + mobile)
+local dragging, dragInput, dragStart, startPos
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+frame.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
