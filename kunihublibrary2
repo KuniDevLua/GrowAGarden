@@ -19,7 +19,7 @@ frame.BorderSizePixel = 0
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- RGB glow border
+-- RGB glow border only
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 8, 1, 8)
 glow.Position = UDim2.new(0, -4, 0, -4)
@@ -43,7 +43,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -70, 0, 32)
 title.Position = UDim2.new(0, 10, 0, 10)
 title.BackgroundTransparency = 1
-title.Text = "Kuni Hub"
+title.Text = "Kuni Library"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 22
@@ -51,12 +51,12 @@ title.TextStrokeTransparency = 0.6
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = frame
 
--- Footer
+-- Footer (UPDATED)
 local footer = Instance.new("TextLabel")
 footer.Size = UDim2.new(1, 0, 0, 16)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
-footer.Text = "@kunikunikuni"
+footer.Text = "Tiktok: @kunikunikuniz"
 footer.TextColor3 = Color3.fromRGB(160, 160, 160)
 footer.Font = Enum.Font.Gotham
 footer.TextSize = 12
@@ -68,7 +68,7 @@ local function TweenInOut(obj, goal, duration)
     TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), goal):Play()
 end
 
--- Create button
+-- Create button (no RGB now)
 local function createButton(parent, posY, text)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 26)
@@ -88,15 +88,6 @@ local function createButton(parent, posY, text)
     end)
     btn.MouseLeave:Connect(function()
         TweenInOut(btn, {BackgroundTransparency = 0}, 0.2)
-    end)
-
-    spawn(function()
-        local hue = 0
-        while gui.Parent and btn.Parent do
-            hue = (hue + 0.01) % 1
-            btn.BackgroundColor3 = Color3.fromHSV(hue, 1, 1)
-            wait(0.03)
-        end
     end)
 
     return btn
@@ -133,7 +124,7 @@ button2.MouseButton1Click:Connect(function()
     button2.BackgroundTransparency = 0
 end)
 
--- Button 3 (NEW)
+-- Button 3
 local button3 = createButton(frame, 114, "Run Kuni Hub Gui")
 button3.MouseButton1Click:Connect(function()
     button3.Text = "Loading..."
@@ -148,7 +139,7 @@ button3.MouseButton1Click:Connect(function()
     button3.BackgroundTransparency = 0
 end)
 
--- Minimize
+-- Minimize button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 26, 0, 22)
 minBtn.Position = UDim2.new(1, -60, 0, 10)
@@ -175,7 +166,7 @@ minBtn.MouseButton1Click:Connect(function()
     frame.Size = visible and UDim2.new(0, 220, 0, 162) or UDim2.new(0, 220, 0, 45)
 end)
 
--- Exit
+-- Exit button
 local exitBtn = Instance.new("TextButton")
 exitBtn.Size = UDim2.new(0, 26, 0, 22)
 exitBtn.Position = UDim2.new(1, -30, 0, 10)
@@ -192,7 +183,7 @@ exitBtn.MouseEnter:Connect(function() TweenInOut(exitBtn, {BackgroundTransparenc
 exitBtn.MouseLeave:Connect(function() TweenInOut(exitBtn, {BackgroundTransparency = 0}, 0.2) end)
 exitBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
--- Draggable
+-- Draggable logic
 local dragging = false
 local dragStart, startPos
 
