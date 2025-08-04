@@ -149,7 +149,7 @@ button2.MouseButton1Click:Connect(function()
 end)
 
 -- Button 3
-local button3 = createButton(frame, 114, "Run Kuni Hub")
+local button3 = createButton(frame, 114, "Run Yawi X Hub")
 button3.MouseButton1Click:Connect(function()
     button3.Text = "Loading..."
     button3.BackgroundTransparency = 0.5
