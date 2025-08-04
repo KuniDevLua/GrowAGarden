@@ -67,7 +67,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -70, 0, 32)
 title.Position = UDim2.new(0, 10, 0, 10)
 title.BackgroundTransparency = 1
-title.Text = "Kuni Library"
+title.Text = "Yawi Library"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 22
@@ -80,7 +80,7 @@ local footer = Instance.new("TextLabel")
 footer.Size = UDim2.new(1, 0, 0, 16)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.BackgroundTransparency = 1
-footer.Text = "Tiktok: @kunikunikuniz"
+footer.Text = "Tiktok: @yawiyawiyawiz1"
 footer.TextColor3 = Color3.fromRGB(160, 160, 160)
 footer.Font = Enum.Font.Gotham
 footer.TextSize = 12
@@ -159,7 +159,7 @@ button3.MouseButton1Click:Connect(function()
     button3.Text = success and "Loaded!" or "Failed!"
     if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
     wait(2)
-    button3.Text = "Run Kuni Hub Gui"
+    button3.Text = "Run Yawi X Hub"
     button3.BackgroundTransparency = 0
 end)
 
