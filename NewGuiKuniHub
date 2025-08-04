@@ -1,4 +1,4 @@
--- ⛏ Kuni VIP Pet Hatch GUI (Dark Theme Compact Version)
+-- ⛏ Kuni VIP Pet Hatch GUI (Dark Theme with White Buttons)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -16,19 +16,29 @@ local truePetMap = {}
 local autoRunning = false
 
 local petTable = {
-    ["Common Egg"] = { "Bunny", "Dog", "Golden lab" },
-    ["Uncommon Egg"] = { "Chicken", "Black bunny", "Cat", "Deer" },
-    ["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange tabby", "Spotted deer" },
-    ["Legendary Egg"] = { "Cow", "Polar bear", "Sea otter", "Turtle", "Silver monkey" },
-    ["Mythical Egg"] = { "Grey mouse", "Brown mouse", "Squirrel", "Red giant ant" },
-    ["Bug Egg"] = { "Snail", "Caterpillar", "Giant ant", "Praying mantis", "Dragonfly" },
-    ["Bee Egg"] = { "Bee", "Honey bee", "Bear bee", "Petal bee", "Queen bee" },
-    ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo frog", "Night owl", "Raccoon" },
-    ["Oasis Egg"] = { "Meerkat", "Sand snake", "Axolotl" },
+    ["Common Egg"] = { "Dog", "Bunny", "Golden Lab" },
+    ["Uncommon Egg"] = { "Chicken", "Black Bunny", "Cat", "Deer" },
+    ["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer" },
+    ["Legendary Egg"] = { "Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey" },
+    ["Mythical Egg"] = { "Grey Mouse", "Brown Mouse", "Squirrel", "Red Fox", "Red Giant Ant" },
+    ["Bug Egg"] = { "Snail", "Caterpillar", "Giant Ant", "Praying Mantis", "Dragonfly" },
+    ["Bee Egg"] = { "Bee", "Honey Bee", "Bear Bee", "Petal Bee" },
+    ["Anti Bee Egg"] = { "Wasp", "Tarantula Hawk", "Moth", "Butterfly", "Disco Bee" },
+    ["Common Summer Egg"] = { "Starfish", "Seagull", "Crab" },
+    ["Rare Summer Egg"] = { "Sea Turtle", "Flamingo", "Toucan", "Seal", "Orangutan" },
     ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara" },
-    ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "Spinosaurus", "Ankylosaurus", "Dilophosaurus" },
+    ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
+    ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
     ["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
-    ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus" },
+
+    -- ✅ Gourmet Egg pets based on Cooking & Trading Event Update
+    ["Gourmet Egg"] = {
+        "Bagel Bunny",      -- Common
+        "Pancake Mole",     -- Rare
+        "Sushi Bear",       -- Legendary/Mythical
+        "Spaghetti Sloth",  -- Mythical
+        "French Fry Ferret" -- Prismatic
+    }
 }
 
 local function glitchLabelEffect(label)
@@ -155,7 +165,6 @@ local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 240, 0, 310)
 frame.Position = UDim2.new(0, 20, 0, 100)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-frame.BackgroundTransparency = 0
 frame.BorderSizePixel = 0
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
@@ -164,32 +173,31 @@ stroke.Color = Color3.fromRGB(90, 90, 90)
 stroke.Thickness = 1
 stroke.Transparency = 0.3
 
-local function createButton(text, y, color)
+local function createButton(text, y)
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(1, -20, 0, 30)
 	btn.Position = UDim2.new(0, 10, 0, y)
-	btn.BackgroundColor3 = color
-	btn.BackgroundTransparency = 0.05
+	btn.BackgroundColor3 = Color3.fromRGB(235, 235, 235) -- White button
 	btn.Text = text
 	btn.Font = Enum.Font.FredokaOne
 	btn.TextSize = 14
-	btn.TextColor3 = Color3.fromRGB(235, 235, 235)
+	btn.TextColor3 = Color3.fromRGB(25, 25, 25)
 	btn.AutoButtonColor = false
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 	local stroke = Instance.new("UIStroke", btn)
-	stroke.Color = Color3.fromRGB(80, 80, 80)
+	stroke.Color = Color3.fromRGB(200, 200, 200)
 	stroke.Thickness = 1
-	stroke.Transparency = 0.3
+	stroke.Transparency = 0.2
 
 	btn.MouseEnter:Connect(function()
 		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = color:Lerp(Color3.fromRGB(255, 255, 255), 0.08)
+			BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 		}):Play()
 		stroke.Thickness = 1.5
 	end)
 	btn.MouseLeave:Connect(function()
 		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = color
+			BackgroundColor3 = Color3.fromRGB(235, 235, 235)
 		}):Play()
 		stroke.Thickness = 1
 	end)
@@ -225,13 +233,13 @@ RunService.RenderStepped:Connect(function()
 	end
 end)
 
--- 🔘 Buttons (Dark Colors)
-local randomBtn = createButton("Randomize Pets", 36, Color3.fromRGB(40, 40, 90))
+-- 🔘 White Buttons
+local randomBtn = createButton("Randomize Pets", 36)
 randomBtn.MouseButton1Click:Connect(function()
 	countdownAndRandomize(randomBtn)
 end)
 
-local toggleBtn = createButton("Show ESP", 72, Color3.fromRGB(60, 30, 30))
+local toggleBtn = createButton("Show ESP", 72)
 toggleBtn.MouseButton1Click:Connect(function()
 	espEnabled = not espEnabled
 	toggleBtn.Text = espEnabled and "Show ESP (ON)" or "Close ESP (OFF)"
@@ -244,7 +252,7 @@ toggleBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
-local autoBtn = createButton("Auto Randomize", 108, Color3.fromRGB(30, 50, 90))
+local autoBtn = createButton("Auto Randomize", 108)
 autoBtn.MouseButton1Click:Connect(function()
 	autoRunning = not autoRunning
 	autoBtn.Text = autoRunning and "Auto Randomize (ON)" or "Auto Randomize (OFF)"
@@ -256,17 +264,17 @@ autoBtn.MouseButton1Click:Connect(function()
 	end)()
 end)
 
-local loadAgeBtn = createButton("Open Pet Age Changer", 144, Color3.fromRGB(35, 35, 60))
+local loadAgeBtn = createButton("Open Pet Age Changer", 144)
 loadAgeBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/PetAgeChanger"))()
 end)
 
-local mutationBtn = createButton("Open Pet Mutation Finder", 180, Color3.fromRGB(60, 25, 40))
+local mutationBtn = createButton("Open Pet Mutation Finder", 180)
 mutationBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
 end)
 
-local duplicateBtn = createButton("Open Pet Cloner", 216, Color3.fromRGB(30, 60, 30))
+local duplicateBtn = createButton("Open Pet Cloner", 216)
 duplicateBtn.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petduplicator"))()
 end)
@@ -280,6 +288,7 @@ credit.Font = Enum.Font.FredokaOne
 credit.TextSize = 12
 credit.TextColor3 = Color3.fromRGB(180, 180, 180)
 
+-- 🔻 Minimize Button
 local miniBtn = Instance.new("TextButton")
 miniBtn.Size = UDim2.new(0, 24, 0, 24)
 miniBtn.Position = UDim2.new(1, -28, 0, 4)
