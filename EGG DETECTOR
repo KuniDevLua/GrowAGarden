@@ -1,0 +1,236 @@
+-- 🧪 Egg Detector GUI (Standalone Egg Randomizer Only)
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+-- ✅ Loading Screen (External)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen1"))()
+
+-- Delay to simulate loading (adjust if needed)
+task.wait(5)
+
+-- 🌟 Setup
+local espEnabled = true
+local truePetMap = {}
+local autoRunning = false
+
+-- 🐾 Pet Table (Add more as needed)
+local petTable = {
+    ["Common Egg"] = { "Dog", "Bunny", "Golden Lab" },
+    ["Uncommon Egg"] = { "Chicken", "Black Bunny", "Cat", "Deer" },
+    ["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer" },
+    ["Legendary Egg"] = { "Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey" },
+    ["Mythical Egg"] = { "Grey Mouse", "Brown Mouse", "Squirrel", "Red Fox", "Red Giant Ant" },
+    ["Bug Egg"] = { "Snail", "Caterpillar", "Giant Ant", "Praying Mantis", "Dragonfly" },
+    ["Bee Egg"] = { "Bee", "Honey Bee", "Bear Bee", "Petal Bee" },
+    ["Anti Bee Egg"] = { "Wasp", "Tarantula Hawk", "Moth", "Butterfly", "Disco Bee" },
+    ["Common Summer Egg"] = { "Starfish", "Seagull", "Crab" },
+    ["Rare Summer Egg"] = { "Sea Turtle", "Flamingo", "Toucan", "Seal", "Orangutan" },
+    ["Oasis Egg"] = { "Meerkat", "Sand Snake", "Axolotl" },
+    ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara" },
+    ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
+    ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
+    ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl" },
+    ["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
+    ["Gourmet Egg"] = {
+        "Bagel Bunny",        -- Common
+        "Pancake Mole",       -- Rare
+        "Sushi Bear",         -- Legendary/Mythical
+        "Spaghetti Sloth",    -- Mythical
+        "French Fry Ferret"   -- Prismatic
+    }
+}
+
+-- ✨ Glitch Label
+local function glitchEffect(label)
+	coroutine.wrap(function()
+		local original = label.TextColor3
+		for i = 1, 2 do
+			label.TextColor3 = Color3.new(0, 1, 0)
+			wait(0.07)
+			label.TextColor3 = original
+			wait(0.07)
+		end
+	end)()
+end
+
+-- 👁 Apply ESP
+local function applyESP(eggModel, petName)
+	if eggModel:FindFirstChild("PetBillboard", true) then eggModel:FindFirstChild("PetBillboard", true):Destroy() end
+	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
+	if not espEnabled then return end
+
+	local base = eggModel:FindFirstChildWhichIsA("BasePart")
+	if not base then return end
+
+	local billboard = Instance.new("BillboardGui", base)
+	billboard.Name = "PetBillboard"
+	billboard.Size = UDim2.new(0, 250, 0, 40)
+	billboard.AlwaysOnTop = true
+	billboard.StudsOffset = Vector3.new(0, 4.5, 0)
+
+	local label = Instance.new("TextLabel", billboard)
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = eggModel.Name .. " | " .. petName
+	label.TextScaled = true
+	label.TextColor3 = Color3.new(1, 1, 1)
+	label.Font = Enum.Font.FredokaOne
+	label.TextStrokeTransparency = 0.3
+
+	local highlight = Instance.new("Highlight", eggModel)
+	highlight.Name = "ESPHighlight"
+	highlight.FillColor = Color3.fromRGB(255, 200, 0)
+	highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+	highlight.FillTransparency = 0.7
+	highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+	highlight.Adornee = eggModel
+
+	glitchEffect(label)
+end
+
+local function removeESP(eggModel)
+	if eggModel:FindFirstChild("PetBillboard", true) then eggModel:FindFirstChild("PetBillboard", true):Destroy() end
+	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
+end
+
+-- 🔍 Find Eggs Nearby
+local function getNearbyEggs(radius)
+	local eggs = {}
+	local root = (player.Character or player.CharacterAdded:Wait()):WaitForChild("HumanoidRootPart")
+	for _, obj in pairs(Workspace:GetDescendants()) do
+		if obj:IsA("Model") and petTable[obj.Name] then
+			local dist = (obj:GetModelCFrame().Position - root.Position).Magnitude
+			if dist <= (radius or 60) then
+				if not truePetMap[obj] then
+					local pets = petTable[obj.Name]
+					truePetMap[obj] = pets[math.random(1, #pets)]
+				end
+				table.insert(eggs, obj)
+			end
+		end
+	end
+	return eggs
+end
+
+-- 🎲 Randomizer Logic
+local function randomizeEggs()
+	for _, egg in ipairs(getNearbyEggs(60)) do
+		local pets = petTable[egg.Name]
+		local chosen = pets[math.random(1, #pets)]
+		truePetMap[egg] = chosen
+		applyESP(egg, chosen)
+	end
+end
+
+local function countdownAndRandomize(button)
+	for i = 3, 1, -1 do
+		button.Text = "Randomizing in: " .. i
+		wait(1)
+	end
+	randomizeEggs()
+	button.Text = "Randomize Pets"
+end
+
+-- 🖼️ GUI Setup
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "EggDetectorGUI"
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 230, 0, 180)
+frame.Position = UDim2.new(0, 25, 0, 100)
+frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+frame.Parent = gui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(80, 80, 80)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Egg Detector"
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 18
+title.TextColor3 = Color3.fromRGB(255, 220, 120)
+title.BackgroundTransparency = 1
+
+-- Drag Setup
+local dragBtn = Instance.new("TextButton", title)
+dragBtn.Size = UDim2.new(1, 0, 1, 0)
+dragBtn.Text = ""
+dragBtn.BackgroundTransparency = 1
+local dragging, offset = false, Vector2.zero
+
+dragBtn.MouseButton1Down:Connect(function()
+	dragging = true
+	offset = Vector2.new(mouse.X - frame.Position.X.Offset, mouse.Y - frame.Position.Y.Offset)
+end)
+UserInputService.InputEnded:Connect(function() dragging = false end)
+RunService.RenderStepped:Connect(function()
+	if dragging then
+		frame.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
+	end
+end)
+
+-- Footer
+local footer = Instance.new("TextLabel", frame)
+footer.Size = UDim2.new(1, 0, 0, 20)
+footer.Position = UDim2.new(0, 0, 1, -20)
+footer.Text = "Tiktok: @yawiyawiyawiz1"
+footer.Font = Enum.Font.FredokaOne
+footer.TextSize = 12
+footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.BackgroundTransparency = 1
+
+-- Button Creator
+local function createButton(text, yPos)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -20, 0, 28)
+	btn.Position = UDim2.new(0, 10, 0, yPos)
+	btn.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+	btn.TextColor3 = Color3.fromRGB(25, 25, 25)
+	btn.Font = Enum.Font.FredokaOne
+	btn.TextSize = 14
+	btn.Text = text
+	btn.Parent = frame
+	btn.AutoButtonColor = false
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	local stroke = Instance.new("UIStroke", btn)
+	stroke.Color = Color3.fromRGB(200, 200, 200)
+	stroke.Transparency = 0.2
+	return btn
+end
+
+-- Buttons
+local randomBtn = createButton("Randomize Pets", 36)
+randomBtn.MouseButton1Click:Connect(function()
+	countdownAndRandomize(randomBtn)
+end)
+
+local autoBtn = createButton("Auto Randomize", 70)
+autoBtn.MouseButton1Click:Connect(function()
+	autoRunning = not autoRunning
+	autoBtn.Text = autoRunning and "Auto Randomize (ON)" or "Auto Randomize (OFF)"
+	coroutine.wrap(function()
+		while autoRunning do
+			countdownAndRandomize(randomBtn)
+			wait(1)
+		end
+	end)()
+end)
+
+local toggleBtn = createButton("Show ESP", 104)
+toggleBtn.MouseButton1Click:Connect(function()
+	espEnabled = not espEnabled
+	toggleBtn.Text = espEnabled and "Show ESP (ON)" or "Close ESP (OFF)"
+	for _, egg in pairs(getNearbyEggs(60)) do
+		if espEnabled then
+			applyESP(egg, truePetMap[egg])
+		else
+			removeESP(egg)
+		end
+	end
+end)
