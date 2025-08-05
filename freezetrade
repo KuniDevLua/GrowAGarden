@@ -120,7 +120,7 @@ if success then
 end
 
 --// Username Box
-local UsernameBox = Instance.new("")
+local UsernameBox = Instance.new("TextBox")
 UsernameBox.PlaceholderText = "Enter Username"
 UsernameBox.Font = Enum.Font.GothamBold
 UsernameBox.TextSize = 13
