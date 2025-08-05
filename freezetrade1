@@ -120,7 +120,7 @@ if success then
 end
 
 --// Username Box
-local UsernameBox = Instance.new("TextBox")
+local UsernameBox = Instance.new("")
 UsernameBox.PlaceholderText = "Enter Username"
 UsernameBox.Font = Enum.Font.GothamBold
 UsernameBox.TextSize = 13
@@ -191,7 +191,7 @@ AcceptButton.MouseButton1Click:Connect(function() notify("Auto accept triggered!
 
 --// Credit
 local CreditLabel = Instance.new("TextLabel")
-CreditLabel.Text = "FIXED BY KUNI"
+CreditLabel.Text = "Tiktok: @yawiyawiyawiz1"
 CreditLabel.Font = Enum.Font.GothamBold
 CreditLabel.TextSize = 13
 CreditLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
