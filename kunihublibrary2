@@ -11,8 +11,8 @@ gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 220, 0, 162)
-frame.Position = UDim2.new(0.5, -110, 0.5, -81)
+frame.Size = UDim2.new(0, 220, 0, 226)
+frame.Position = UDim2.new(0.5, -110, 0.5, -113)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 frame.BackgroundTransparency = 0.1
 frame.BorderSizePixel = 0
@@ -43,7 +43,7 @@ spawn(function()
     warningLabel:Destroy()
 end)
 
--- RGB glow border only
+-- RGB glow border
 local glow = Instance.new("Frame")
 glow.Size = UDim2.new(1, 8, 1, 8)
 glow.Position = UDim2.new(0, -4, 0, -4)
@@ -163,6 +163,21 @@ button3.MouseButton1Click:Connect(function()
     button3.BackgroundTransparency = 0
 end)
 
+-- Button 4
+local button4 = createButton(frame, 146, "Open Egg Detector")
+button4.MouseButton1Click:Connect(function()
+    button4.Text = "Loading..."
+    button4.BackgroundTransparency = 0.5
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1"))()
+    end)
+    button4.Text = success and "Loaded!" or "Failed!"
+    if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
+    wait(2)
+    button4.Text = "Open Egg Detector"
+    button4.BackgroundTransparency = 0
+end)
+
 -- Minimize button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 26, 0, 22)
@@ -185,9 +200,10 @@ minBtn.MouseButton1Click:Connect(function()
     button1.Visible = visible
     button2.Visible = visible
     button3.Visible = visible
+    button4.Visible = visible
     footer.Visible = visible
     minBtn.Text = visible and "–" or "+"
-    frame.Size = visible and UDim2.new(0, 220, 0, 162) or UDim2.new(0, 220, 0, 45)
+    frame.Size = visible and UDim2.new(0, 220, 0, 226) or UDim2.new(0, 220, 0, 45)
 end)
 
 -- Exit button
