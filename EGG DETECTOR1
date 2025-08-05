@@ -1,4 +1,4 @@
--- 🧪 Egg Detector GUI (Standalone Egg Randomizer Only)
+-- 🧪 Egg Detector GUI (Premium Version with Emojis)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -9,8 +9,6 @@ local mouse = player:GetMouse()
 
 -- ✅ Loading Screen (External)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen1"))()
-
--- Delay to simulate loading (adjust if needed)
 task.wait(5)
 
 -- 🌟 Setup
@@ -18,7 +16,7 @@ local espEnabled = true
 local truePetMap = {}
 local autoRunning = false
 
--- 🐾 Pet Table (Add more as needed)
+-- 🐾 Pet Table
 local petTable = {
     ["Common Egg"] = { "Dog", "Bunny", "Golden Lab" },
     ["Uncommon Egg"] = { "Chicken", "Black Bunny", "Cat", "Deer" },
@@ -37,11 +35,7 @@ local petTable = {
     ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl" },
     ["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
     ["Gourmet Egg"] = {
-        "Bagel Bunny",        -- Common
-        "Pancake Mole",       -- Rare
-        "Sushi Bear",         -- Legendary/Mythical
-        "Spaghetti Sloth",    -- Mythical
-        "French Fry Ferret"   -- Prismatic
+        "Bagel Bunny", "Pancake Mole", "Sushi Bear", "Spaghetti Sloth", "French Fry Ferret"
     }
 }
 
@@ -58,7 +52,7 @@ local function glitchEffect(label)
 	end)()
 end
 
--- 👁 Apply ESP
+-- 👁 ESP
 local function applyESP(eggModel, petName)
 	if eggModel:FindFirstChild("PetBillboard", true) then eggModel:FindFirstChild("PetBillboard", true):Destroy() end
 	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
@@ -98,7 +92,7 @@ local function removeESP(eggModel)
 	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
 end
 
--- 🔍 Find Eggs Nearby
+-- 🔍 Find Eggs
 local function getNearbyEggs(radius)
 	local eggs = {}
 	local root = (player.Character or player.CharacterAdded:Wait()):WaitForChild("HumanoidRootPart")
@@ -117,7 +111,7 @@ local function getNearbyEggs(radius)
 	return eggs
 end
 
--- 🎲 Randomizer Logic
+-- 🎲 Randomizer
 local function randomizeEggs()
 	for _, egg in ipairs(getNearbyEggs(60)) do
 		local pets = petTable[egg.Name]
@@ -129,35 +123,37 @@ end
 
 local function countdownAndRandomize(button)
 	for i = 3, 1, -1 do
-		button.Text = "Randomizing in: " .. i
+		button.Text = "🎲 Randomizing in: " .. i
 		wait(1)
 	end
 	randomizeEggs()
-	button.Text = "Randomize Pets"
+	button.Text = "🎲 Randomize Pets"
 end
 
--- 🖼️ GUI Setup
+-- 🖼️ GUI
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "EggDetectorGUI"
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 230, 0, 180)
+frame.Size = UDim2.new(0, 240, 0, 190)
 frame.Position = UDim2.new(0, 25, 0, 100)
-frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", frame).Color = Color3.fromRGB(80, 80, 80)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(255, 205, 100)
+stroke.Thickness = 1.4
 
 -- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "Egg Detector"
+title.Text = "🥚 Egg Detector"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 18
 title.TextColor3 = Color3.fromRGB(255, 220, 120)
 title.BackgroundTransparency = 1
 
--- Drag Setup
+-- Drag
 local dragBtn = Instance.new("TextButton", title)
 dragBtn.Size = UDim2.new(1, 0, 1, 0)
 dragBtn.Text = ""
@@ -179,19 +175,21 @@ end)
 local footer = Instance.new("TextLabel", frame)
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
-footer.Text = "Tiktok: @yawiyawiyawiz1"
+footer.Text = "👤 Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.TextColor3 = Color3.fromRGB(150, 150, 150)
 footer.BackgroundTransparency = 1
 
--- Button Creator
+-- Premium Button
 local function createButton(text, yPos)
 	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, -20, 0, 28)
+	btn.Size = UDim2.new(1, -20, 0, 30)
 	btn.Position = UDim2.new(0, 10, 0, yPos)
-	btn.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
-	btn.TextColor3 = Color3.fromRGB(25, 25, 25)
+	btn.BackgroundColor3 = Color3.fromRGB(255, 230, 120)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255) -- White font
+	btn.TextStrokeColor3 = Color3.fromRGB(0, 0, 0) -- Black stroke
+	btn.TextStrokeTransparency = 0.4
 	btn.Font = Enum.Font.FredokaOne
 	btn.TextSize = 14
 	btn.Text = text
@@ -199,21 +197,27 @@ local function createButton(text, yPos)
 	btn.AutoButtonColor = false
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 	local stroke = Instance.new("UIStroke", btn)
-	stroke.Color = Color3.fromRGB(200, 200, 200)
-	stroke.Transparency = 0.2
+	stroke.Color = Color3.fromRGB(120, 100, 50)
+	stroke.Thickness = 1
+	btn.MouseEnter:Connect(function()
+		btn.BackgroundColor3 = Color3.fromRGB(255, 240, 160)
+	end)
+	btn.MouseLeave:Connect(function()
+		btn.BackgroundColor3 = Color3.fromRGB(255, 230, 120)
+	end)
 	return btn
 end
 
--- Buttons
-local randomBtn = createButton("Randomize Pets", 36)
+-- 🧩 Buttons
+local randomBtn = createButton("🎲 Randomize Pets", 36)
 randomBtn.MouseButton1Click:Connect(function()
 	countdownAndRandomize(randomBtn)
 end)
 
-local autoBtn = createButton("Auto Randomize", 70)
+local autoBtn = createButton("⚙️ Auto Randomize", 72)
 autoBtn.MouseButton1Click:Connect(function()
 	autoRunning = not autoRunning
-	autoBtn.Text = autoRunning and "Auto Randomize (ON)" or "Auto Randomize (OFF)"
+	autoBtn.Text = autoRunning and "⚙️ Auto Randomize (ON)" or "⚙️ Auto Randomize (OFF)"
 	coroutine.wrap(function()
 		while autoRunning do
 			countdownAndRandomize(randomBtn)
@@ -222,10 +226,10 @@ autoBtn.MouseButton1Click:Connect(function()
 	end)()
 end)
 
-local toggleBtn = createButton("Show ESP", 104)
+local toggleBtn = createButton("🔍 Show ESP", 108)
 toggleBtn.MouseButton1Click:Connect(function()
 	espEnabled = not espEnabled
-	toggleBtn.Text = espEnabled and "Show ESP (ON)" or "Close ESP (OFF)"
+	toggleBtn.Text = espEnabled and "🔍 Show ESP (ON)" or "❌ Close ESP (OFF)"
 	for _, egg in pairs(getNearbyEggs(60)) do
 		if espEnabled then
 			applyESP(egg, truePetMap[egg])
