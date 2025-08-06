@@ -123,8 +123,8 @@ button1.MouseButton1Click:Connect(function()
     button1.Text = "Loading..."
     button1.BackgroundTransparency = 0.5
     local success, err = pcall(function()
-        local Spawner = loadstring(game:HttpGet("https://codeberg.org/GrowAFilipino/GrowAGarden/raw/branch/main/Spawner.lua"))()
-        Spawner.Load()
+        local Spawner = loadstring(game:HttpGet("https://codeberg.org/darkdarkdark/roblox/raw/branch/main/Spawner.lua"))()
+‎Spawner.Load()
     end)
     button1.Text = success and "Loaded!" or "Failed!"
     if not success then warn("[Kuni Hub] Error: "..tostring(err)) end
