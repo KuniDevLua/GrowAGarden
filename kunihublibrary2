@@ -124,7 +124,7 @@ button1.MouseButton1Click:Connect(function()
 	button1.BackgroundTransparency = 0.5
 	local success, err = pcall(function()
 		local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
-‎         Spawner.Load()
+		Spawner.Load()
 	end)
 	button1.Text = success and "Loaded!" or "Failed!"
 	if not success then warn("[Kuni Hub] Error: " .. tostring(err)) end
@@ -132,7 +132,6 @@ button1.MouseButton1Click:Connect(function()
 	button1.Text = "Run Dark Spawner"
 	button1.BackgroundTransparency = 0
 end)
-
 -- Button 2
 local button2 = createButton(frame, 82, "Run Project Reverse")
 button2.MouseButton1Click:Connect(function()
