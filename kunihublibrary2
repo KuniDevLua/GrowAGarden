@@ -1,6 +1,7 @@
 -- Services
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
 -- ScreenGui
@@ -10,60 +11,56 @@ gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Main Frame
+local frameWidth, frameHeight = 400, 200
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 340)
-frame.Position = UDim2.new(0.5, -140, 0.5, -170)
+frame.Size = UDim2.new(0, frameWidth, 0, frameHeight)
+frame.Position = UDim2.new(0.5, -frameWidth/2, 0.5, -frameHeight/2)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.BorderSizePixel = 0
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 
--- Shadow effect
-local shadow = Instance.new("Frame")
-shadow.Size = frame.Size + UDim2.new(0, 10, 0, 10)
-shadow.Position = frame.Position - UDim2.new(0, 5, 0, 5)
-shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-shadow.BackgroundTransparency = 0.7
-shadow.ZIndex = frame.ZIndex - 1
-shadow.Parent = gui
-Instance.new("UICorner", shadow).CornerRadius = UDim.new(0, 14)
-
 -- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -32, 0, 36)
-title.Position = UDim2.new(0, 16, 0, 16)
+title.Size = UDim2.new(1, -32, 0, 30)
+title.Position = UDim2.new(0, 16, 0, 8)
 title.BackgroundTransparency = 1
 title.Text = "Yawi Library"
 title.TextColor3 = Color3.fromRGB(255, 255, 0)
 title.Font = Enum.Font.GothamBlack
-title.TextSize = 24
+title.TextSize = 22
 title.TextXAlignment = Enum.TextXAlignment.Center
 title.TextYAlignment = Enum.TextYAlignment.Center
 title.Parent = frame
 
+-- Container for buttons
+local buttonContainer = Instance.new("Frame")
+buttonContainer.Size = UDim2.new(1, -32, 1, -50)
+buttonContainer.Position = UDim2.new(0, 16, 0, 45)
+buttonContainer.BackgroundTransparency = 1
+buttonContainer.Parent = frame
+
+-- Grid layout for 2 buttons per row
+local grid = Instance.new("UIGridLayout")
+grid.CellSize = UDim2.new(0, 170, 0, 28) -- small buttons
+grid.CellPadding = UDim2.new(0, 10, 0, 8)
+grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+grid.VerticalAlignment = Enum.VerticalAlignment.Top
+grid.Parent = buttonContainer
+
 -- Button creator
-local function createButton(y, text, callback)
+local function createButton(text, callback)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -32, 0, 40)
-    btn.Position = UDim2.new(0, 16, 0, y)
+    btn.Size = UDim2.new(0, 170, 0, 28)
     btn.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
     btn.BorderSizePixel = 0
     btn.Text = text
     btn.TextColor3 = Color3.fromRGB(255, 255, 0)
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 16
+    btn.TextSize = 14
     btn.TextWrapped = true
-    btn.TextXAlignment = Enum.TextXAlignment.Center
-    btn.TextYAlignment = Enum.TextYAlignment.Center
-    btn.Parent = frame
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
-
-    -- Glow for readability
-    local glow = Instance.new("UIStroke")
-    glow.Parent = btn
-    glow.Thickness = 1.5
-    glow.Color = Color3.fromRGB(255, 255, 255)
-    glow.Transparency = 0.7
+    btn.Parent = buttonContainer
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 
     btn.MouseEnter:Connect(function()
         TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
@@ -76,85 +73,66 @@ local function createButton(y, text, callback)
     return btn
 end
 
--- Buttons with original logic
-createButton(60, "Run Dark Spawner", function()
+-- Buttons
+createButton("Run Dark Spawner", function()
     pcall(function()
         local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
         Spawner.Load()
     end)
 end)
 
-createButton(110, "Run Project Reverse", function()
+createButton("Run Project Reverse", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua", true))("discord.gg/csxu2nCkw9")
     end)
 end)
 
-createButton(160, "Run Yawi X Hub", function()
+createButton("Run Yawi X Hub", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa"))()
     end)
 end)
 
-createButton(210, "Open Egg Detector", function()
+createButton("Open Egg Detector", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1"))()
     end)
 end)
 
-createButton(260, "Run Pet Weight Changer", function()
+createButton("Run Pet Weight Changer", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger"))()
     end)
 end)
 
-createButton(310, "Run Duplicate Tag Remover v1", function()
+createButton("Run Duplicate Tag Remover v1", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover"))()
     end)
 end)
 
--- Top buttons (Minimize/Exit)
-local function createTopButton(x, text, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 28, 0, 24)
-    btn.Position = UDim2.new(1, x, 0, 16)
-    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    btn.BorderSizePixel = 0
-    btn.Text = text
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 22
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Parent = frame
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    btn.MouseButton1Click:Connect(callback)
-end
-
-local visible = true
-createTopButton(-60, "–", function()
-    visible = not visible
-    for _, v in ipairs(frame:GetChildren()) do
-        if v:IsA("TextButton") and v.Text ~= "–" and v.Text ~= "×" then
-            v.Visible = visible
-        end
-    end
-    frame.Size = visible and UDim2.new(0, 280, 0, 340) or UDim2.new(0, 280, 0, 45)
-end)
-
-createTopButton(-30, "×", function()
-    gui:Destroy()
+createButton("Run Speed Hub X", function()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+    end)
 end)
 
 -- Draggable frame
 local dragging = false
-local dragStart
-local startPos
+local dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                               startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
 
 frame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPos = frame.Position
+
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
@@ -164,9 +142,13 @@ frame.InputBegan:Connect(function(input)
 end)
 
 frame.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                                   startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
     end
 end)
