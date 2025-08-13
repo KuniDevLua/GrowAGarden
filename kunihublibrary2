@@ -192,6 +192,21 @@ button5.MouseButton1Click:Connect(function()
     button5.BackgroundTransparency = 0
 end)
 
+-- Button 6: Run Duplicate Tag Remover v1
+local button6 = createButton(frame, 210, "Run Duplicate Tag Remover v1")
+button6.MouseButton1Click:Connect(function()
+    button6.Text = "Loading..."
+    button6.BackgroundTransparency = 0.5
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover"))()
+    end)
+    button6.Text = success and "Loaded!" or "Failed!"
+    if not success then warn("[Kuni Hub] Error: " .. tostring(err)) end
+    wait(2)
+    button6.Text = "Run Duplicate Tag Remover v1"
+    button6.BackgroundTransparency = 0
+end)
+
 -- Minimize button
 local minBtn = Instance.new("TextButton")
 minBtn.Size = UDim2.new(0, 26, 0, 22)
