@@ -22,16 +22,61 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 
 -- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -32, 0, 30)
+title.Size = UDim2.new(1, -90, 0, 30) -- adjust for buttons
 title.Position = UDim2.new(0, 16, 0, 8)
 title.BackgroundTransparency = 1
 title.Text = "Yawi Library"
 title.TextColor3 = Color3.fromRGB(255, 255, 0)
 title.Font = Enum.Font.GothamBlack
 title.TextSize = 22
-title.TextXAlignment = Enum.TextXAlignment.Center
-title.TextYAlignment = Enum.TextYAlignment.Center
+title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = frame
+
+-- Exit Button
+local exitBtn = Instance.new("TextButton")
+exitBtn.Size = UDim2.new(0, 30, 0, 30)
+exitBtn.Position = UDim2.new(1, -35, 0, 8)
+exitBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+exitBtn.Text = "X"
+exitBtn.TextColor3 = Color3.new(1, 1, 1)
+exitBtn.Font = Enum.Font.GothamBold
+exitBtn.TextSize = 16
+exitBtn.Parent = frame
+Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 8)
+
+exitBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- Minimize Button
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(1, -70, 0, 8)
+minBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 200)
+minBtn.Text = "-"
+minBtn.TextColor3 = Color3.new(1, 1, 1)
+minBtn.Font = Enum.Font.GothamBold
+minBtn.TextSize = 16
+minBtn.Parent = frame
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 8)
+
+local isMinimized = false
+local fullSize = frame.Size
+local fullPos = frame.Position
+
+minBtn.MouseButton1Click:Connect(function()
+    if not isMinimized then
+        TweenService:Create(frame, TweenInfo.new(0.3), {
+            Size = UDim2.new(0, frameWidth, 0, 45)
+        }):Play()
+        isMinimized = true
+    else
+        TweenService:Create(frame, TweenInfo.new(0.3), {
+            Size = fullSize
+        }):Play()
+        isMinimized = false
+    end
+end)
 
 -- Container for buttons
 local buttonContainer = Instance.new("Frame")
@@ -40,9 +85,9 @@ buttonContainer.Position = UDim2.new(0, 16, 0, 45)
 buttonContainer.BackgroundTransparency = 1
 buttonContainer.Parent = frame
 
--- Grid layout for 2 buttons per row
+-- Grid layout
 local grid = Instance.new("UIGridLayout")
-grid.CellSize = UDim2.new(0, 170, 0, 28) -- small buttons
+grid.CellSize = UDim2.new(0, 170, 0, 28)
 grid.CellPadding = UDim2.new(0, 10, 0, 8)
 grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
 grid.VerticalAlignment = Enum.VerticalAlignment.Top
@@ -117,18 +162,20 @@ createButton("Run Speed Hub X", function()
     end)
 end)
 
--- Draggable frame
-local dragging = false
-local dragInput, dragStart, startPos
+-- Draggable frame (PC & Mobile)
+local dragging, dragInput, dragStart, startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-                               startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    frame.Position = UDim2.new(
+        startPos.X.Scale, startPos.X.Offset + delta.X,
+        startPos.Y.Scale, startPos.Y.Offset + delta.Y
+    )
 end
 
 frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 
+    or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = frame.Position
@@ -142,7 +189,8 @@ frame.InputBegan:Connect(function(input)
 end)
 
 frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
+    if input.UserInputType == Enum.UserInputType.MouseMovement 
+    or input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
 end)
