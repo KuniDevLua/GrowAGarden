@@ -22,7 +22,7 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 
 -- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -90, 0, 30) -- adjust for buttons
+title.Size = UDim2.new(1, -90, 0, 30)
 title.Position = UDim2.new(0, 16, 0, 8)
 title.BackgroundTransparency = 1
 title.Text = "Yawi Library"
@@ -62,15 +62,16 @@ Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 8)
 
 local isMinimized = false
 local fullSize = frame.Size
-local fullPos = frame.Position
 
 minBtn.MouseButton1Click:Connect(function()
     if not isMinimized then
+        buttonContainer.Visible = false
         TweenService:Create(frame, TweenInfo.new(0.3), {
             Size = UDim2.new(0, frameWidth, 0, 45)
         }):Play()
         isMinimized = true
     else
+        buttonContainer.Visible = true
         TweenService:Create(frame, TweenInfo.new(0.3), {
             Size = fullSize
         }):Play()
@@ -79,7 +80,7 @@ minBtn.MouseButton1Click:Connect(function()
 end)
 
 -- Container for buttons
-local buttonContainer = Instance.new("Frame")
+buttonContainer = Instance.new("Frame")
 buttonContainer.Size = UDim2.new(1, -32, 1, -50)
 buttonContainer.Position = UDim2.new(0, 16, 0, 45)
 buttonContainer.BackgroundTransparency = 1
@@ -159,6 +160,12 @@ end)
 createButton("Speed Hub X", function()
     pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+    end)
+end)
+
+createButton("NatHub Loader", function()
+    pcall(function()
+        loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
     end)
 end)
 
