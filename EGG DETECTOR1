@@ -1,4 +1,4 @@
--- 🧪 Egg Detector GUI (Premium Version with Emojis)
+-- 🧪 Pet Randomizer GUI (Premium Version with Emojis)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -29,7 +29,7 @@ local petTable = {
     ["Common Summer Egg"] = { "Starfish", "Seagull", "Crab" },
     ["Rare Summer Egg"] = { "Sea Turtle", "Flamingo", "Toucan", "Seal", "Orangutan" },
     ["Oasis Egg"] = { "Meerkat", "Sand Snake", "Axolotl" },
-    ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara" },
+    ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara", "Mimic Octopus"},
     ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
     ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
     ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl" },
@@ -89,7 +89,7 @@ end
 
 local function removeESP(eggModel)
 	if eggModel:FindFirstChild("PetBillboard", true) then eggModel:FindFirstChild("PetBillboard", true):Destroy() end
-	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
+	if eggModel:FindFirstChild("ESPHighlight") then eggModel:FindFirstChild("ESPHighlight"):Destroy() end
 end
 
 -- 🔍 Find Eggs
@@ -132,25 +132,24 @@ end
 
 -- 🖼️ GUI
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "EggDetectorGUI"
+gui.Name = "PetRandomizerGUI"
 
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 240, 0, 190)
 frame.Position = UDim2.new(0, 25, 0, 100)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
 frame.Parent = gui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(255, 205, 100)
-stroke.Thickness = 1.4
+stroke.Color = Color3.fromRGB(255, 200, 200)
+stroke.Thickness = 2
 
--- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "🥚 Egg Detector"
+title.Text = "🎲 Pet Randomizer"
 title.Font = Enum.Font.FredokaOne
-title.TextSize = 18
-title.TextColor3 = Color3.fromRGB(255, 220, 120)
+title.TextSize = 20
+title.TextColor3 = Color3.fromRGB(255, 250, 255) -- very light
 title.BackgroundTransparency = 1
 
 -- Drag
@@ -171,44 +170,56 @@ RunService.RenderStepped:Connect(function()
 	end
 end)
 
--- Footer
 local footer = Instance.new("TextLabel", frame)
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.Text = "👤 Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(150, 150, 150)
+footer.TextColor3 = Color3.fromRGB(255, 250, 255) -- very light
 footer.BackgroundTransparency = 1
 
--- Premium Button
+-- Pastel color list
+local pastelColors = {
+	Color3.fromRGB(255, 176, 224),
+	Color3.fromRGB(187, 222, 251),
+	Color3.fromRGB(255, 236, 179),
+	Color3.fromRGB(200, 230, 201),
+	Color3.fromRGB(225, 190, 231)
+}
+local nextColor = 1
+
 local function createButton(text, yPos)
 	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, -20, 0, 30)
+	btn.Size = UDim2.new(1, -20, 0, 32)
 	btn.Position = UDim2.new(0, 10, 0, yPos)
-	btn.BackgroundColor3 = Color3.fromRGB(255, 230, 120)
-	btn.TextColor3 = Color3.fromRGB(255, 255, 255) -- White font
-	btn.TextStrokeColor3 = Color3.fromRGB(0, 0, 0) -- Black stroke
-	btn.TextStrokeTransparency = 0.4
+	btn.BackgroundColor3 = pastelColors[nextColor]
+	btn.TextColor3 = btn.BackgroundColor3:Lerp(Color3.new(1,1,1), 0.85) -- extra light
+	btn.TextStrokeTransparency = 1
 	btn.Font = Enum.Font.FredokaOne
 	btn.TextSize = 14
 	btn.Text = text
 	btn.Parent = frame
-	btn.AutoButtonColor = false
-	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	btn.AutoButtonColor = true
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 	local stroke = Instance.new("UIStroke", btn)
-	stroke.Color = Color3.fromRGB(120, 100, 50)
+	stroke.Color = Color3.fromRGB(130, 130, 130)
 	stroke.Thickness = 1
+
+	nextColor = nextColor + 1
+	if nextColor > #pastelColors then nextColor = 1 end
+
 	btn.MouseEnter:Connect(function()
-		btn.BackgroundColor3 = Color3.fromRGB(255, 240, 160)
+		btn.BackgroundColor3 = btn.BackgroundColor3:Lerp(Color3.new(1,1,1), 0.15)
 	end)
 	btn.MouseLeave:Connect(function()
-		btn.BackgroundColor3 = Color3.fromRGB(255, 230, 120)
+		btn.BackgroundColor3 = btn.BackgroundColor3:Lerp(Color3.new(0,0,0), 0.15)
 	end)
+
 	return btn
 end
 
--- 🧩 Buttons
+-- Buttons
 local randomBtn = createButton("🎲 Randomize Pets", 36)
 randomBtn.MouseButton1Click:Connect(function()
 	countdownAndRandomize(randomBtn)
