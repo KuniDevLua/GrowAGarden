@@ -1,209 +1,187 @@
--- Services
+-- 🌸 Full Pastel Yawi Library GUI with Loading Screen
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
--- ScreenGui
-local gui = Instance.new("ScreenGui")
-gui.Name = "KuniHubPremiumGUI"
-gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
-
--- Main Frame
-local frameWidth, frameHeight = 400, 200
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, frameWidth, 0, frameHeight)
-frame.Position = UDim2.new(0.5, -frameWidth/2, 0.5, -frameHeight/2)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-frame.BorderSizePixel = 0
-frame.Parent = gui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
-
--- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -90, 0, 30)
-title.Position = UDim2.new(0, 16, 0, 8)
-title.BackgroundTransparency = 1
-title.Text = "Yawi Library"
-title.TextColor3 = Color3.fromRGB(255, 255, 0)
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 22
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = frame
-
--- Exit Button
-local exitBtn = Instance.new("TextButton")
-exitBtn.Size = UDim2.new(0, 30, 0, 30)
-exitBtn.Position = UDim2.new(1, -35, 0, 8)
-exitBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-exitBtn.Text = "X"
-exitBtn.TextColor3 = Color3.new(1, 1, 1)
-exitBtn.Font = Enum.Font.GothamBold
-exitBtn.TextSize = 16
-exitBtn.Parent = frame
-Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 8)
-
-exitBtn.MouseButton1Click:Connect(function()
-    gui:Destroy()
-end)
-
--- Minimize Button
-local minBtn = Instance.new("TextButton")
-minBtn.Size = UDim2.new(0, 30, 0, 30)
-minBtn.Position = UDim2.new(1, -70, 0, 8)
-minBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 200)
-minBtn.Text = "-"
-minBtn.TextColor3 = Color3.new(1, 1, 1)
-minBtn.Font = Enum.Font.GothamBold
-minBtn.TextSize = 16
-minBtn.Parent = frame
-Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 8)
-
-local isMinimized = false
-local fullSize = frame.Size
-
-minBtn.MouseButton1Click:Connect(function()
-    if not isMinimized then
-        buttonContainer.Visible = false
-        TweenService:Create(frame, TweenInfo.new(0.3), {
-            Size = UDim2.new(0, frameWidth, 0, 45)
-        }):Play()
-        isMinimized = true
-    else
-        buttonContainer.Visible = true
-        TweenService:Create(frame, TweenInfo.new(0.3), {
-            Size = fullSize
-        }):Play()
-        isMinimized = false
-    end
-end)
-
--- Container for buttons
-buttonContainer = Instance.new("Frame")
-buttonContainer.Size = UDim2.new(1, -32, 1, -50)
-buttonContainer.Position = UDim2.new(0, 16, 0, 45)
-buttonContainer.BackgroundTransparency = 1
-buttonContainer.Parent = frame
-
--- Grid layout
-local grid = Instance.new("UIGridLayout")
-grid.CellSize = UDim2.new(0, 170, 0, 28)
-grid.CellPadding = UDim2.new(0, 10, 0, 8)
-grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
-grid.VerticalAlignment = Enum.VerticalAlignment.Top
-grid.Parent = buttonContainer
-
--- Button creator
-local function createButton(text, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 170, 0, 28)
-    btn.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-    btn.BorderSizePixel = 0
-    btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(255, 255, 0)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 14
-    btn.TextWrapped = true
-    btn.Parent = buttonContainer
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-
-    btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(75, 75, 75)}):Play()
-    end)
-    btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
-    end)
-
-    btn.MouseButton1Click:Connect(callback)
-    return btn
+-- Loading screen function
+local function loadLoadingScreen(callback)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/loadingscreen1"))()
+    task.delay(5, callback)
 end
 
--- Buttons
-createButton("Rayfield Dark Spawner", function()
-    pcall(function()
-        local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
-        Spawner.Load()
-    end)
-end)
+-- Main GUI function
+local function createMainGUI()
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "KuniHubPremiumGUI"
+    gui.ResetOnSpawn = false
+    gui.Parent = player:WaitForChild("PlayerGui")
 
-createButton("Project Reverse", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua", true))("discord.gg/csxu2nCkw9")
-    end)
-end)
+    -- Main Frame
+    local frameWidth, frameHeight = 400, 200
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, frameWidth, 0, frameHeight)
+    frame.Position = UDim2.new(0.5, -frameWidth/2, 0.5, -frameHeight/2)
+    frame.BackgroundColor3 = Color3.fromRGB(255, 182, 193)
+    frame.BorderSizePixel = 0
+    frame.Parent = gui
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
 
-createButton("Yawi Hub X", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa"))()
-    end)
-end)
+    -- Title
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -90, 0, 30)
+    title.Position = UDim2.new(0, 16, 0, 8)
+    title.BackgroundTransparency = 1
+    title.Text = "Yawi Library"
+    title.TextColor3 = Color3.fromRGB(255, 105, 180)
+    title.Font = Enum.Font.GothamBlack
+    title.TextSize = 22
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = frame
 
-createButton("Egg Detector", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1"))()
-    end)
-end)
+    -- Exit Button
+    local exitBtn = Instance.new("TextButton")
+    exitBtn.Size = UDim2.new(0, 30, 0, 30)
+    exitBtn.Position = UDim2.new(1, -35, 0, 8)
+    exitBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    exitBtn.Text = "X"
+    exitBtn.TextColor3 = Color3.new(1, 1, 1)
+    exitBtn.Font = Enum.Font.GothamBold
+    exitBtn.TextSize = 16
+    exitBtn.Parent = frame
+    Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 8)
+    exitBtn.MouseButton1Click:Connect(function() gui:Destroy() end)
 
-createButton("Pet Weight Changer", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger"))()
-    end)
-end)
+    -- Button Container
+    local buttonContainer = Instance.new("Frame")
+    buttonContainer.Size = UDim2.new(1, -32, 1, -50)
+    buttonContainer.Position = UDim2.new(0, 16, 0, 45)
+    buttonContainer.BackgroundTransparency = 1
+    buttonContainer.Parent = frame
 
-createButton("Duplicate Tag Remover v1", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover"))()
-    end)
-end)
+    -- Grid layout
+    local grid = Instance.new("UIGridLayout")
+    grid.CellSize = UDim2.new(0, 170, 0, 28)
+    grid.CellPadding = UDim2.new(0, 10, 0, 8)
+    grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    grid.VerticalAlignment = Enum.VerticalAlignment.Top
+    grid.Parent = buttonContainer
 
-createButton("Speed Hub X", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
-    end)
-end)
+    -- Button colors
+    local pastelColors = {
+        Color3.fromRGB(255,182,193), Color3.fromRGB(255,223,186),
+        Color3.fromRGB(255,255,186), Color3.fromRGB(186,255,201),
+        Color3.fromRGB(186,225,255), Color3.fromRGB(225,186,255),
+        Color3.fromRGB(255,186,245), Color3.fromRGB(186,255,255)
+    }
 
-createButton("NatHub Loader", function()
-    pcall(function()
-        loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
-    end)
-end)
+    -- Button creator
+    local function createButton(text, callback, index)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0, 170, 0, 28)
+        btn.BackgroundColor3 = pastelColors[index] or Color3.fromRGB(255,182,193)
+        btn.BorderSizePixel = 0
+        btn.Text = text
+        btn.TextColor3 = Color3.fromRGB(80,30,120)
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 14
+        btn.TextWrapped = true
+        btn.Parent = buttonContainer
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0,8)
 
--- Draggable frame (PC & Mobile)
-local dragging, dragInput, dragStart, startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    frame.Position = UDim2.new(
-        startPos.X.Scale, startPos.X.Offset + delta.X,
-        startPos.Y.Scale, startPos.Y.Offset + delta.Y
-    )
-end
-
-frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 
-    or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
+        btn.MouseEnter:Connect(function()
+            TweenService:Create(btn,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(255,228,225)}):Play()
         end)
+        btn.MouseLeave:Connect(function()
+            TweenService:Create(btn,TweenInfo.new(0.15),{BackgroundColor3=pastelColors[index]}):Play()
+        end)
+        btn.MouseButton1Click:Connect(function()
+            TweenService:Create(btn,TweenInfo.new(0.1),{BackgroundColor3=Color3.fromRGB(255,160,180)}):Play()
+            task.wait(0.15)
+            TweenService:Create(btn,TweenInfo.new(0.1),{BackgroundColor3=pastelColors[index]}):Play()
+            callback()
+        end)
+        return btn
     end
-end)
 
-frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement 
-    or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
+    -- Buttons with updated names
+    createButton("Rayfield Dark Spawner (Unstable)", function()
+        pcall(function()
+            local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+            Spawner.Load()
+        end)
+    end,1)
+    createButton("Project Reverse (Keyless)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua", true))("discord.gg/csxu2nCkw9")
+        end)
+    end,2)
+    createButton("Yawi Hub X (Keyless)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa"))()
+        end)
+    end,3)
+    createButton("Pet Randomizer (Keyless)", function()
+        -- Add your Pet Randomizer code here
+    end,4)
+    createButton("Pet Weight Changer (Keyless)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger"))()
+        end)
+    end,5)
+    createButton("Duplicate Tag Remover (Keyless)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover"))()
+        end)
+    end,6)
+    createButton("Speed Hub X (Key)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+        end)
+    end,7)
+    createButton("Nat Hub Loader (Key)", function()
+        pcall(function()
+            loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
+        end)
+    end,8)
 
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
+    -- Footer (smaller font)
+    local footer = Instance.new("TextLabel")
+    footer.Size = UDim2.new(1,-32,0,16)
+    footer.Position = UDim2.new(0,16,1,-30)
+    footer.BackgroundTransparency = 1
+    footer.Text = "TikTok: @yawiyawiyawiz"
+    footer.Font = Enum.Font.Gotham
+    footer.TextColor3 = Color3.fromRGB(150,50,200)
+    footer.TextScaled = true
+    footer.Parent = frame
+
+    -- Draggable frame
+    local dragging, dragInput, dragStart, startPos
+    local function update(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
-end)
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then
+            dragging=true
+            dragStart=input.Position
+            startPos=frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState==Enum.UserInputState.End then dragging=false end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch then
+            dragInput=input
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input==dragInput and dragging then update(input) end
+    end)
+end
+
+-- Start loading screen then show GUI
+loadLoadingScreen(createMainGUI)
