@@ -1,4 +1,4 @@
--- 🌸 Full Pastel Yawi Library GUI with Loading Screen
+-- 🌸 Full Pastel Yawi Library GUI with Loading Screen and Egg Detector
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -123,7 +123,9 @@ local function createMainGUI()
         end)
     end,3)
     createButton("Pet Randomizer (Keyless)", function()
-        -- Add your Pet Randomizer code here
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1"))()
+        end)
     end,4)
     createButton("Pet Weight Changer (Keyless)", function()
         pcall(function()
@@ -135,7 +137,7 @@ local function createMainGUI()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover"))()
         end)
     end,6)
-    createButton("Speed Hub X (Key)", function()
+    createButton("Speed Hub X (Keyless)", function()
         pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
         end)
@@ -146,15 +148,17 @@ local function createMainGUI()
         end)
     end,8)
 
-    -- Footer (smaller font)
+    -- Footer (pinaka-baba, mas maliit)
     local footer = Instance.new("TextLabel")
-    footer.Size = UDim2.new(1,-32,0,16)
-    footer.Position = UDim2.new(0,16,1,-30)
+    footer.Size = UDim2.new(1,-32,0,14) -- mas maliit na height
+    footer.Position = UDim2.new(0,16,1,-14) -- eksaktong naka-bottom
     footer.BackgroundTransparency = 1
     footer.Text = "TikTok: @yawiyawiyawiz"
     footer.Font = Enum.Font.Gotham
     footer.TextColor3 = Color3.fromRGB(150,50,200)
-    footer.TextScaled = true
+    footer.TextSize = 10 -- mas maliit na font
+    footer.TextXAlignment = Enum.TextXAlignment.Center
+    footer.TextYAlignment = Enum.TextYAlignment.Center
     footer.Parent = frame
 
     -- Draggable frame
