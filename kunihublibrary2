@@ -106,7 +106,7 @@ local function createMainGUI()
     end
 
     -- Buttons with updated names
-    createButton("Rayfield Dark Spawner (Unstable)", function()
+    createButton("Rayfield Dark Spawner (NOT WORKING)", function()
         pcall(function()
             local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
             Spawner.Load()
