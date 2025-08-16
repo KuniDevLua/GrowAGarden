@@ -9,73 +9,58 @@ screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Main Frame
 local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0, 300, 0, 180)
-frame.Position = UDim2.new(0.5, -150, 0.5, -90)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.Size = UDim2.new(0, 320, 0, 200)
+frame.Position = UDim2.new(0.5, -160, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(255, 200, 230) -- pastel pink
 frame.Active = true
 frame.Draggable = true
 frame.Name = "PetAgeFrame"
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
 -- Title
 local title = Instance.new("TextLabel", frame)
-title.Text = "Pet Age Leveller v2"
+title.Text = "🌸 Pet Age Leveller 🌸"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextColor3 = Color3.fromRGB(255, 105, 180)
 title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 5)
-
--- Close Button
-local closeButton = Instance.new("TextButton", frame)
-closeButton.Text = "X"
-closeButton.Font = Enum.Font.FredokaOne
-closeButton.TextSize = 18
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
-closeButton.Size = UDim2.new(0, 28, 0, 28)
-closeButton.Position = UDim2.new(1, -34, 0, 6)
-Instance.new("UICorner", closeButton)
-
-closeButton.MouseButton1Click:Connect(function()
-	frame.Visible = false
-end)
 
 -- Equipped Pet Label
 local petInfo = Instance.new("TextLabel", frame)
 petInfo.Text = "Equipped Pet: [None]"
 petInfo.Font = Enum.Font.FredokaOne
 petInfo.TextSize = 16
-petInfo.TextColor3 = Color3.fromRGB(255, 255, 160)
+petInfo.TextColor3 = Color3.fromRGB(255, 80, 180)
 petInfo.BackgroundTransparency = 1
 petInfo.Position = UDim2.new(0, 12, 0, 40)
 petInfo.Size = UDim2.new(1, -24, 0, 24)
 petInfo.TextXAlignment = Enum.TextXAlignment.Left
 
--- "Set Age to 50" Button (White Style)
+-- "Set Age to 50" Button
 local button = Instance.new("TextButton", frame)
-button.Text = "Set Age to 50"
+button.Text = "🎀 Set Age to 50 🎀"
 button.Font = Enum.Font.FredokaOne
 button.TextSize = 16
-button.TextColor3 = Color3.fromRGB(40, 40, 40)
+button.TextColor3 = Color3.fromRGB(50, 50, 50)
 button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 button.Size = UDim2.new(0, 220, 0, 36)
 button.Position = UDim2.new(0.5, -110, 0, 76)
 Instance.new("UICorner", button)
 
--- "Add +1 Age" Button (White Style)
+-- "Add +1 Age" Button
 local addAgeButton = Instance.new("TextButton", frame)
-addAgeButton.Text = "Add +1 Age"
+addAgeButton.Text = "🌟 Add +1 Age 🌟"
 addAgeButton.Font = Enum.Font.FredokaOne
 addAgeButton.TextSize = 16
-addAgeButton.TextColor3 = Color3.fromRGB(40, 40, 40)
+addAgeButton.TextColor3 = Color3.fromRGB(50, 50, 50)
 addAgeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 addAgeButton.Size = UDim2.new(0, 220, 0, 36)
 addAgeButton.Position = UDim2.new(0.5, -110, 0, 122)
 Instance.new("UICorner", addAgeButton)
 
--- Footer Label
+-- Footer
 local footer = Instance.new("TextLabel", frame)
 footer.Text = "Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
@@ -85,18 +70,18 @@ footer.BackgroundTransparency = 1
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 
--- Function to get equipped pet tool
+-- Function to get equipped pet (supports mutated pets)
 local function getEquippedPetTool()
 	character = player.Character or player.CharacterAdded:Wait()
 	for _, child in pairs(character:GetChildren()) do
-		if child:IsA("Tool") and child.Name:find("Age") then
+		if child:IsA("Tool") and (child.Name:find("Age") or child:FindFirstChild("Mutation")) then
 			return child
 		end
 	end
 	return nil
 end
 
--- Update GUI pet name
+-- Update GUI pet display
 local function updateGUI()
 	local pet = getEquippedPetTool()
 	if pet then
@@ -106,53 +91,53 @@ local function updateGUI()
 	end
 end
 
--- Set Age to 50 Button Logic (with 20s countdown)
+-- Set Age to 50 Button Logic
 button.MouseButton1Click:Connect(function()
 	local tool = getEquippedPetTool()
 	if tool then
-		for i = 20, 1, -1 do
-			button.Text = "Changing Age in " .. i .. "..."
+		for i = 5, 1, -1 do
+			button.Text = "🎀 Setting Age in " .. i .. "..."
 			task.wait(1)
 		end
 		local newName = tool.Name:gsub("%[Age%s%d+%]", "[Age 50]")
 		tool.Name = newName
 		petInfo.Text = "Equipped Pet: " .. tool.Name
-		button.Text = "Set Age to 50"
+		button.Text = "🎀 Set Age to 50 🎀"
 	else
-		button.Text = "No Pet Equipped!"
+		button.Text = "🎀 No Pet Equipped! 🎀"
 		task.wait(2)
-		button.Text = "Set Age to 50"
+		button.Text = "🎀 Set Age to 50 🎀"
 	end
 end)
 
--- Add +1 Age Button Logic (with 5s countdown, up to 100)
+-- Add +1 Age Button Logic (up to 100)
 addAgeButton.MouseButton1Click:Connect(function()
 	local tool = getEquippedPetTool()
 	if tool then
 		local currentAge = tonumber(tool.Name:match("%[Age%s(%d+)%]"))
 		if currentAge and currentAge < 100 then
-			for i = 5, 1, -1 do
-				addAgeButton.Text = "Adding +1 in " .. i .. "..."
+			for i = 3, 1, -1 do
+				addAgeButton.Text = "🌟 Adding +1 in " .. i .. "..."
 				task.wait(1)
 			end
 			local newAge = currentAge + 1
 			local newName = tool.Name:gsub("%[Age%s%d+%]", "[Age " .. newAge .. "]")
 			tool.Name = newName
 			petInfo.Text = "Equipped Pet: " .. tool.Name
-			addAgeButton.Text = "Add +1 Age"
+			addAgeButton.Text = "🌟 Add +1 Age 🌟"
 		elseif currentAge and currentAge >= 100 then
-			addAgeButton.Text = "Max Age is 100!"
+			addAgeButton.Text = "🌟 Max Age is 100! 🌟"
 			task.wait(2)
-			addAgeButton.Text = "Add +1 Age"
+			addAgeButton.Text = "🌟 Add +1 Age 🌟"
 		else
-			addAgeButton.Text = "Invalid Age Format!"
+			addAgeButton.Text = "🌟 Invalid Age Format! 🌟"
 			task.wait(2)
-			addAgeButton.Text = "Add +1 Age"
+			addAgeButton.Text = "🌟 Add +1 Age 🌟"
 		end
 	else
-		addAgeButton.Text = "No Pet Equipped!"
+		addAgeButton.Text = "🌟 No Pet Equipped! 🌟"
 		task.wait(2)
-		addAgeButton.Text = "Add +1 Age"
+		addAgeButton.Text = "🌟 Add +1 Age 🌟"
 	end
 end)
 
