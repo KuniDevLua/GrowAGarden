@@ -1,4 +1,4 @@
--- ⛏ Kuni VIP Pet Hatch GUI (Dark Theme with White Buttons)
+-- ⛏ Kuni VIP Pet Hatch GUI (Pastel Theme with Emojis)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -30,14 +30,12 @@ local petTable = {
     ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
     ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
     ["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
-
-    -- ✅ Gourmet Egg pets based on Cooking & Trading Event Update
     ["Gourmet Egg"] = {
-        "Bagel Bunny",      -- Common
-        "Pancake Mole",     -- Rare
-        "Sushi Bear",       -- Legendary/Mythical
-        "Spaghetti Sloth",  -- Mythical
-        "French Fry Ferret" -- Prismatic
+        "Bagel Bunny",
+        "Pancake Mole",
+        "Sushi Bear",
+        "Spaghetti Sloth",
+        "French Fry Ferret"
     }
 }
 
@@ -154,30 +152,31 @@ local function countdownAndRandomize(button)
         wait(1)
     end
     randomizeNearbyEggs()
-    button.Text = "Randomize Pets"
+    button.Text = "🌟 Randomize Pets"
 end
 
--- 🎨 GUI Theme Setup
+-- 🎨 GUI Setup
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "KuniPetHatch"
 
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 240, 0, 310)
 frame.Position = UDim2.new(0, 20, 0, 100)
-frame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+frame.BackgroundColor3 = Color3.fromRGB(255, 240, 245) -- pastel pink background
 frame.BorderSizePixel = 0
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(90, 90, 90)
+stroke.Color = Color3.fromRGB(255, 182, 193)
 stroke.Thickness = 1
 stroke.Transparency = 0.3
 
-local function createButton(text, y)
+-- Button Creation
+local function createButton(text, y, bgColor)
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(1, -20, 0, 30)
 	btn.Position = UDim2.new(0, 10, 0, y)
-	btn.BackgroundColor3 = Color3.fromRGB(235, 235, 235) -- White button
+	btn.BackgroundColor3 = bgColor or Color3.fromRGB(255, 255, 255)
 	btn.Text = text
 	btn.Font = Enum.Font.FredokaOne
 	btn.TextSize = 14
@@ -190,15 +189,11 @@ local function createButton(text, y)
 	stroke.Transparency = 0.2
 
 	btn.MouseEnter:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = Color3.fromRGB(220, 220, 220)
-		}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.2), { BackgroundColor3 = bgColor:Lerp(Color3.fromRGB(255,255,255),0.2) }):Play()
 		stroke.Thickness = 1.5
 	end)
 	btn.MouseLeave:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {
-			BackgroundColor3 = Color3.fromRGB(235, 235, 235)
-		}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.2), { BackgroundColor3 = bgColor }):Play()
 		stroke.Thickness = 1
 	end)
 
@@ -206,15 +201,17 @@ local function createButton(text, y)
 	return btn
 end
 
+-- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 28)
 title.BackgroundTransparency = 1
-title.Text = "Yawi Hub X"
+title.Text = "🌸 Yawi Hub X 🌸"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 17
-title.TextColor3 = Color3.fromRGB(255, 225, 130)
+title.TextColor3 = Color3.fromRGB(255, 105, 180)
 title.TextStrokeTransparency = 0.7
 
+-- Dragging
 local drag = Instance.new("TextButton", title)
 drag.Size = UDim2.new(1, 0, 1, 0)
 drag.Text = ""
@@ -224,79 +221,82 @@ drag.MouseButton1Down:Connect(function()
 	dragging = true
 	offset = Vector2.new(mouse.X - frame.Position.X.Offset, mouse.Y - frame.Position.Y.Offset)
 end)
-UserInputService.InputEnded:Connect(function()
-	dragging = false
-end)
+UserInputService.InputEnded:Connect(function() dragging = false end)
 RunService.RenderStepped:Connect(function()
-	if dragging then
-		frame.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
-	end
+	if dragging then frame.Position = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y) end
 end)
 
--- 🔘 White Buttons
-local randomBtn = createButton("Randomize Pets", 36)
-randomBtn.MouseButton1Click:Connect(function()
-	countdownAndRandomize(randomBtn)
-end)
+-- Buttons
+local pastelColors = {
+	Color3.fromRGB(255, 182, 193),
+	Color3.fromRGB(173, 216, 230),
+	Color3.fromRGB(144, 238, 144),
+	Color3.fromRGB(255, 228, 196),
+	Color3.fromRGB(221, 160, 221),
+	Color3.fromRGB(255, 250, 205)
+}
 
-local toggleBtn = createButton("Show ESP", 72)
-toggleBtn.MouseButton1Click:Connect(function()
-	espEnabled = not espEnabled
-	toggleBtn.Text = espEnabled and "Show ESP (ON)" or "Close ESP (OFF)"
-	for _, egg in pairs(getPlayerGardenEggs(60)) do
-		if espEnabled then
-			applyEggESP(egg, truePetMap[egg])
-		else
-			removeEggESP(egg)
+local buttonNames = {
+	"🌟 Randomize Pets",
+	"👁 Show ESP",
+	"🔁 Auto Randomize",
+	"⏳ Open Pet Age Changer",
+	"🧬 Open Pet Mutation Finder",
+	"🛠 Duplicator"
+}
+
+local buttonFunctions = {
+	function() countdownAndRandomize(randomBtn) end,
+	function()
+		espEnabled = not espEnabled
+		toggleBtn.Text = espEnabled and "👁 Show ESP (ON)" or "👁 Show ESP (OFF)"
+		for _, egg in pairs(getPlayerGardenEggs(60)) do
+			if espEnabled then applyEggESP(egg, truePetMap[egg]) else removeEggESP(egg) end
 		end
-	end
-end)
+	end,
+	function()
+		autoRunning = not autoRunning
+		autoBtn.Text = autoRunning and "🔁 Auto Randomize (ON)" or "🔁 Auto Randomize (OFF)"
+		coroutine.wrap(function()
+			while autoRunning do
+				countdownAndRandomize(randomBtn)
+				wait(1)
+			end
+		end)()
+	end,
+	function() loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/PetAgeChanger"))() end,
+	function() loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))() end,
+	function() loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petduplicator"))() end
+}
 
-local autoBtn = createButton("Auto Randomize", 108)
-autoBtn.MouseButton1Click:Connect(function()
-	autoRunning = not autoRunning
-	autoBtn.Text = autoRunning and "Auto Randomize (ON)" or "Auto Randomize (OFF)"
-	coroutine.wrap(function()
-		while autoRunning do
-			countdownAndRandomize(randomBtn)
-			wait(1)
-		end
-	end)()
-end)
+for i, name in ipairs(buttonNames) do
+	local yPos = 36 + (i-1)*36
+	local btn = createButton(name, yPos, pastelColors[i])
+	btn.MouseButton1Click:Connect(buttonFunctions[i])
+	if name:find("Randomize") then randomBtn = btn
+	elseif name:find("ESP") then toggleBtn = btn
+	elseif name:find("Auto") then autoBtn = btn end
+end
 
-local loadAgeBtn = createButton("Open Pet Age Changer", 144)
-loadAgeBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/PetAgeChanger"))()
-end)
-
-local mutationBtn = createButton("Open Pet Mutation Finder", 180)
-mutationBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/Mt"))()
-end)
-
-local duplicateBtn = createButton("Open Pet Cloner", 216)
-duplicateBtn.MouseButton1Click:Connect(function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petduplicator"))()
-end)
-
+-- Footer
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, 0, 0, 18)
 credit.Position = UDim2.new(0, 0, 0, 260)
 credit.BackgroundTransparency = 1
-credit.Text = "Tiktok: @yawiyawiyawiz1"
+credit.Text = "💖 Tiktok: @yawiyawiyawiz1"
 credit.Font = Enum.Font.FredokaOne
 credit.TextSize = 12
-credit.TextColor3 = Color3.fromRGB(180, 180, 180)
+credit.TextColor3 = Color3.fromRGB(255, 105, 180)
 
--- 🔻 Minimize Button
+-- 🔻 Minimize
 local miniBtn = Instance.new("TextButton")
 miniBtn.Size = UDim2.new(0, 24, 0, 24)
 miniBtn.Position = UDim2.new(1, -28, 0, 4)
-miniBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+miniBtn.BackgroundColor3 = Color3.fromRGB(240, 230, 240)
 miniBtn.Text = "-"
 miniBtn.Font = Enum.Font.FredokaOne
 miniBtn.TextSize = 18
-miniBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+miniBtn.TextColor3 = Color3.fromRGB(120, 120, 120)
 miniBtn.Parent = frame
 miniBtn.AutoButtonColor = false
 Instance.new("UICorner", miniBtn).CornerRadius = UDim.new(1, 0)
@@ -305,15 +305,15 @@ local minimized = false
 local minimizedLabel = Instance.new("TextButton")
 minimizedLabel.Size = UDim2.new(0, 140, 0, 30)
 minimizedLabel.Position = UDim2.new(0, 20, 0, 100)
-minimizedLabel.Text = "Yawi X"
+minimizedLabel.Text = "🌸 Yawi X 🌸"
 minimizedLabel.Font = Enum.Font.FredokaOne
 minimizedLabel.TextSize = 16
-minimizedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizedLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+minimizedLabel.TextColor3 = Color3.fromRGB(255, 105, 180)
+minimizedLabel.BackgroundColor3 = Color3.fromRGB(255, 240, 245)
 minimizedLabel.Visible = false
 minimizedLabel.Parent = gui
 Instance.new("UICorner", minimizedLabel).CornerRadius = UDim.new(0, 8)
-Instance.new("UIStroke", minimizedLabel).Color = Color3.fromRGB(50, 50, 50)
+Instance.new("UIStroke", minimizedLabel).Color = Color3.fromRGB(255, 182, 193)
 
 local draggingMini = false
 local movedDuringDrag = false
@@ -342,9 +342,7 @@ RunService.RenderStepped:Connect(function()
 	if draggingMini and minimized then
 		local newPos = UDim2.new(0, mouse.X - offset.X, 0, mouse.Y - offset.Y)
 		local delta = (minimizedLabel.Position.X.Offset - newPos.X.Offset)^2 + (minimizedLabel.Position.Y.Offset - newPos.Y.Offset)^2
-		if delta > dragThreshold then
-			movedDuringDrag = true
-		end
+		if delta > dragThreshold then movedDuringDrag = true end
 		minimizedLabel.Position = newPos
 	end
 end)
