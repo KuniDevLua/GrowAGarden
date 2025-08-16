@@ -2,155 +2,103 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
--- Store original data per pet tool
-local originalData = {}
-
 -- Create GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "PetSizeWeightChanger"
+gui.Name = "PetWeightChanger"
 gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = player:WaitForChild("PlayerGui")
 
+-- Pastel colors for theme
+local pastelColors = {
+	Color3.fromRGB(255, 182, 193), -- light pink
+	Color3.fromRGB(255, 192, 203), -- pink
+	Color3.fromRGB(255, 228, 225), -- misty rose
+	Color3.fromRGB(255, 239, 213), -- papaya whip
+	Color3.fromRGB(255, 218, 185)  -- peach puff
+}
+local nextColor = 1
+
 -- Main Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 280)
-frame.Position = UDim2.new(0.5, -160, 0.5, -140)
-frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)  -- Dark realistic dark gray
-frame.BorderSizePixel = 0
+frame.Size = UDim2.new(0, 340, 0, 210)
+frame.Position = UDim2.new(0.5, -170, 0.5, -105)
+frame.BackgroundColor3 = Color3.fromRGB(255, 240, 245) -- soft pastel pink
 frame.Active = true
 frame.Draggable = true
-frame.Name = "PetSizeFrame"
+frame.Name = "PetWeightFrame"
 frame.Parent = gui
 
-local frameCorner = Instance.new("UICorner")
-frameCorner.CornerRadius = UDim.new(0, 16)
-frameCorner.Parent = frame
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
 
-local frameStroke = Instance.new("UIStroke")
-frameStroke.Color = Color3.fromRGB(60, 60, 60)
-frameStroke.Thickness = 1
-frameStroke.Parent = frame
-
--- Title (centered at top)
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 8)
-title.BackgroundTransparency = 1
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Text = "🧬 Pet Weight Changer"
 title.Font = Enum.Font.FredokaOne
-title.TextSize = 26
-title.TextColor3 = Color3.fromRGB(220, 220, 220)
-title.Text = "PET WEIGHT CHANGER V1"
-title.TextXAlignment = Enum.TextXAlignment.Center
-title.TextYAlignment = Enum.TextYAlignment.Center
-title.Parent = frame
-
--- Exit Button (top-right)
-local exitBtn = Instance.new("TextButton")
-exitBtn.Size = UDim2.new(0, 32, 0, 32)
-exitBtn.Position = UDim2.new(1, -40, 0, 8)
-exitBtn.BackgroundTransparency = 1
-exitBtn.Text = "✕"
-exitBtn.Font = Enum.Font.FredokaOne
-exitBtn.TextSize = 26
-exitBtn.TextColor3 = Color3.fromRGB(255, 85, 85)
-exitBtn.Parent = frame
-exitBtn.MouseEnter:Connect(function()
-	TweenService:Create(exitBtn, TweenInfo.new(0.15), {TextColor3 = Color3.fromRGB(255, 120, 120)}):Play()
-end)
-exitBtn.MouseLeave:Connect(function()
-	TweenService:Create(exitBtn, TweenInfo.new(0.15), {TextColor3 = Color3.fromRGB(255, 85, 85)}):Play()
-end)
-exitBtn.MouseButton1Click:Connect(function()
-	gui:Destroy()
-end)
+title.TextSize = 18
+title.TextColor3 = pastelColors[nextColor]
+nextColor = nextColor + 1
+if nextColor > #pastelColors then nextColor = 1 end
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, 0, 0, 28)
+title.Position = UDim2.new(0, 0, 0, 6)
 
 -- Pet info label
-local petInfoLabel = Instance.new("TextLabel")
-petInfoLabel.Size = UDim2.new(0.9, 0, 0, 30)
-petInfoLabel.Position = UDim2.new(0.05, 0, 0, 65)
+local petInfoLabel = Instance.new("TextLabel", frame)
+petInfoLabel.Size = UDim2.new(0.9, 0, 0, 20)
+petInfoLabel.Position = UDim2.new(0.05, 0, 0, 45)
 petInfoLabel.BackgroundTransparency = 1
 petInfoLabel.Font = Enum.Font.FredokaOne
-petInfoLabel.TextSize = 18
-petInfoLabel.TextColor3 = Color3.fromRGB(210, 210, 210)
-petInfoLabel.Text = "No pet equipped"
+petInfoLabel.TextSize = 14
+petInfoLabel.TextColor3 = Color3.fromRGB(160, 50, 90)
+petInfoLabel.Text = "(Pet/Tool Equipped)"
 petInfoLabel.TextXAlignment = Enum.TextXAlignment.Center
-petInfoLabel.Parent = frame
 
--- Input box for scale
-local inputBox = Instance.new("TextBox")
-inputBox.Size = UDim2.new(0.8, 0, 0, 44)
-inputBox.Position = UDim2.new(0.1, 0, 0, 105)
-inputBox.PlaceholderText = "Enter Weight (1 - 1000)"
+-- Input box for weight
+local inputBox = Instance.new("TextBox", frame)
+inputBox.Size = UDim2.new(0.8, 0, 0, 34)
+inputBox.Position = UDim2.new(0.1, 0, 0, 70)
+inputBox.PlaceholderText = "Add Weight"
 inputBox.Font = Enum.Font.FredokaOne
-inputBox.TextSize = 18
-inputBox.TextColor3 = Color3.fromRGB(230, 230, 230)
-inputBox.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-inputBox.ClipsDescendants = true
-inputBox.Parent = frame
+inputBox.TextSize = 14
+inputBox.TextColor3 = Color3.fromRGB(80, 40, 60)
+inputBox.BackgroundColor3 = pastelColors[3]
+Instance.new("UICorner", inputBox)
 
-local inputCorner = Instance.new("UICorner")
-inputCorner.CornerRadius = UDim.new(0, 12)
-inputCorner.Parent = inputBox
-
-local inputStroke = Instance.new("UIStroke")
-inputStroke.Color = Color3.fromRGB(70, 70, 70)
-inputStroke.Thickness = 1
-inputStroke.Parent = inputBox
-
--- Apply Button (renamed to "Apply Pet Size")
-local applyBtn = Instance.new("TextButton")
-applyBtn.Size = UDim2.new(0.8, 0, 0, 44)
-applyBtn.Position = UDim2.new(0.1, 0, 0, 160)
-applyBtn.BackgroundColor3 = Color3.fromRGB(90, 170, 90)
-applyBtn.Text = "Apply Pet Weight"
+-- Apply Button
+local applyBtn = Instance.new("TextButton", frame)
+applyBtn.Size = UDim2.new(0.8, 0, 0, 34)
+applyBtn.Position = UDim2.new(0.1, 0, 0, 110)
+applyBtn.BackgroundColor3 = pastelColors[4]
+applyBtn.Text = "Apply Weight"
 applyBtn.Font = Enum.Font.FredokaOne
-applyBtn.TextSize = 18
-applyBtn.TextColor3 = Color3.fromRGB(240, 240, 240)
-applyBtn.Parent = frame
-
-local applyCorner = Instance.new("UICorner")
-applyCorner.CornerRadius = UDim.new(0, 12)
-applyCorner.Parent = applyBtn
-
-local applyStroke = Instance.new("UIStroke")
-applyStroke.Color = Color3.fromRGB(50, 110, 50)
-applyStroke.Thickness = 1
-applyStroke.Parent = applyBtn
+applyBtn.TextSize = 14
+applyBtn.TextColor3 = Color3.fromRGB(60, 30, 50)
+Instance.new("UICorner", applyBtn)
 
 -- Reset Button
-local resetBtn = Instance.new("TextButton")
-resetBtn.Size = UDim2.new(0.8, 0, 0, 44)
-resetBtn.Position = UDim2.new(0.1, 0, 0, 210)
-resetBtn.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
-resetBtn.Text = "Reset to Normal Weight"
+local resetBtn = Instance.new("TextButton", frame)
+resetBtn.Size = UDim2.new(0.8, 0, 0, 34)
+resetBtn.Position = UDim2.new(0.1, 0, 0, 150)
+resetBtn.BackgroundColor3 = pastelColors[5]
+resetBtn.Text = "Reset Weight"
 resetBtn.Font = Enum.Font.FredokaOne
-resetBtn.TextSize = 18
-resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-resetBtn.Parent = frame
+resetBtn.TextSize = 14
+resetBtn.TextColor3 = Color3.fromRGB(60, 30, 50)
+Instance.new("UICorner", resetBtn)
 
-local resetCorner = Instance.new("UICorner")
-resetCorner.CornerRadius = UDim.new(0, 12)
-resetCorner.Parent = resetBtn
-
-local resetStroke = Instance.new("UIStroke")
-resetStroke.Color = Color3.fromRGB(130, 50, 50)
-resetStroke.Thickness = 1
-resetStroke.Parent = resetBtn
-
--- Footer Label (below buttons)
-local footer = Instance.new("TextLabel")
-footer.Size = UDim2.new(1, 0, 0, 24)
-footer.Position = UDim2.new(0, 0, 0, 260)
+-- Footer inside frame
+local footer = Instance.new("TextLabel", frame)
+footer.Size = UDim2.new(1, -20, 0, 16)
+footer.Position = UDim2.new(0, 10, 1, -22)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.FredokaOne
-footer.TextSize = 14
-footer.TextColor3 = Color3.fromRGB(160, 160, 160)
+footer.TextSize = 12
+footer.TextColor3 = Color3.fromRGB(120, 60, 80)
 footer.Text = "Tiktok: @yawiyawiyawiz"
 footer.TextXAlignment = Enum.TextXAlignment.Center
-footer.Parent = frame
 
--- Hover effect function
+-- Hover effect
 local function hoverEffect(button, normalColor, hoverColor)
 	button.MouseEnter:Connect(function()
 		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = hoverColor}):Play()
@@ -159,10 +107,10 @@ local function hoverEffect(button, normalColor, hoverColor)
 		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = normalColor}):Play()
 	end)
 end
-hoverEffect(applyBtn, applyBtn.BackgroundColor3, Color3.fromRGB(110, 210, 110))
-hoverEffect(resetBtn, resetBtn.BackgroundColor3, Color3.fromRGB(210, 90, 90))
+hoverEffect(applyBtn, applyBtn.BackgroundColor3, pastelColors[1])
+hoverEffect(resetBtn, resetBtn.BackgroundColor3, pastelColors[2])
 
--- Helper: Get equipped pet tool
+-- Helper: Get equipped pet/tool
 local function getEquippedPetTool()
 	local char = player.Character or player.CharacterAdded:Wait()
 	for _, tool in pairs(char:GetChildren()) do
@@ -173,129 +121,68 @@ local function getEquippedPetTool()
 	return nil
 end
 
--- Set pet size scale (use input directly as scale)
-local function setPetSize(petTool, scale)
-	if petTool:IsA("Model") then
-		petTool:ScaleTo(scale)
-	elseif petTool:IsA("Tool") then
-		for _, obj in ipairs(petTool:GetChildren()) do
-			if obj:IsA("Model") then
-				obj:ScaleTo(scale)
-			elseif obj:IsA("BasePart") then
-				local mesh = obj:FindFirstChildOfClass("SpecialMesh")
-				if mesh then
-					mesh.Scale = Vector3.new(scale, scale, scale)
-				else
-					obj.Size = Vector3.new(scale, scale, scale)
-				end
+-- Set pet/tool weight
+local function setPetWeight(tool, weight)
+	for _, obj in ipairs(tool:GetChildren()) do
+		if obj:IsA("BasePart") then
+			local mesh = obj:FindFirstChildOfClass("SpecialMesh")
+			if mesh then
+				mesh.Scale = Vector3.new(weight, weight, weight)
+			else
+				obj.Size = Vector3.new(weight, weight, weight)
 			end
 		end
-	end
-end
-
--- Update pet name text to include weight like "PetName [x.xx KG]"
-local function updatePetNameWithWeight(tool, weight)
-	local name = tool.Name
-	if name:find("%[%d+%.?%d* KG%]") then
-		local newName = name:gsub("%[%d+%.?%d* KG%]", string.format("[%.2f KG]", weight))
-		tool.Name = newName
-	else
-		tool.Name = name .. string.format(" [%.2f KG]", weight)
-	end
-end
-
--- Remove weight part [XX.XX KG] from name (for reset)
-local function removeWeightFromName(name)
-	return (name:gsub("%s*%[%d+%.?%d* KG%]", ""))
-end
-
--- Store original data per pet tool
-local originalData = {}
-
--- Save original scale & weight for pet tool if not saved yet
-local function saveOriginalData(tool)
-	if not originalData[tool] then
-		local originalScale = 1
-		-- Try to get scale from first mesh or BasePart size
-		for _, obj in ipairs(tool:GetChildren()) do
-			if obj:IsA("BasePart") then
-				local mesh = obj:FindFirstChildOfClass("SpecialMesh")
-				if mesh then
-					originalScale = mesh.Scale.X
-					break
-				else
-					originalScale = obj.Size.X -- fallback, size as scale
-					break
-				end
-			end
-		end
-		-- Try to get weight from pet name
-		local weight = tonumber(tool.Name:match("%[(%d+%.?%d*) KG%]")) or originalScale
-
-		originalData[tool] = {
-			scale = originalScale,
-			weight = weight,
-			name = removeWeightFromName(tool.Name),
-			currentScale = originalScale,
-			currentWeight = weight,
-		}
 	end
 end
 
 -- Update pet info label text
-local function updatePetInfoLabel()
-	local tool = getEquippedPetTool()
-	if tool then
-		saveOriginalData(tool) -- ensure original data saved
-		petInfoLabel.Text = tool.Name
-	else
-		petInfoLabel.Text = "No pet equipped"
-	end
+local function updatePetInfoLabel(text)
+	petInfoLabel.Text = text
 end
 
--- Apply Button Logic
+-- Apply Button Logic with 10-sec loading
 applyBtn.MouseButton1Click:Connect(function()
-	local input = tonumber(inputBox.Text)
-	if not input or input < 1 or input > 1000 then
-		warn("⚠ Enter a valid number between 1 and 1000.")
+	local tool = getEquippedPetTool()
+	if not tool then
+		updatePetInfoLabel("(No Equipped Pet/Tool detected)")
 		return
 	end
 
-	local tool = getEquippedPetTool()
-	if tool then
-		saveOriginalData(tool) -- ensure original data saved
-		setPetSize(tool, input)
-		updatePetNameWithWeight(tool, input)
-		-- Update current scale and weight so it persists
-		originalData[tool].currentScale = input
-		originalData[tool].currentWeight = input
-		updatePetInfoLabel()
-		print("Applied scale and updated weight to equipped pet: " .. tool.Name)
-	else
-		warn("No equipped pet tool found.")
+	local weight = tonumber(inputBox.Text)
+	if not weight or weight <= 0 then
+		updatePetInfoLabel("(Enter valid weight)")
+		return
 	end
+
+	-- 10-second loading countdown
+	for i = 10, 1, -1 do
+		applyBtn.Text = "Loading " .. i .. "s"
+		task.wait(1)
+	end
+
+	setPetWeight(tool, weight)
+	updatePetInfoLabel("(Pet/Tool Weight Applied)")
+	applyBtn.Text = "Apply Weight"
 end)
 
 -- Reset Button Logic
 resetBtn.MouseButton1Click:Connect(function()
 	local tool = getEquippedPetTool()
-	if tool and originalData[tool] then
-		local orig = originalData[tool]
-		setPetSize(tool, orig.scale)
-		tool.Name = orig.name -- remove weight part and restore original name
-		originalData[tool].currentScale = orig.scale
-		originalData[tool].currentWeight = orig.weight
-		updatePetInfoLabel()
-		print("Reset pet to original scale and weight: " .. tool.Name)
-	else
-		warn("No original data saved for current pet or no pet equipped.")
+	if tool then
+		setPetWeight(tool, 1)
+		updatePetInfoLabel("(Pet/Tool Equipped)")
 	end
 end)
 
--- Live update pet info label every 0.3 sec
-coroutine.wrap(function()
+-- Live update pet info every 0.5 sec
+task.spawn(function()
 	while true do
-		task.wait(0.3)
-		updatePetInfoLabel()
+		local tool = getEquippedPetTool()
+		if tool then
+			updatePetInfoLabel("(Pet/Tool Equipped)")
+		else
+			updatePetInfoLabel("(No Equipped Pet/Tool detected)")
+		end
+		task.wait(0.5)
 	end
-end)()
+end)
