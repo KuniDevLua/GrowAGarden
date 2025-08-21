@@ -1,4 +1,5 @@
--- 💎 Pastel Pet Mutation Finder GUI by Kuni (Compact, Child-Friendly, Emoji)
+
+-- 💎 Dark Glass Pet Mutation Finder GUI by Kuni (Compact, Child-Friendly, Emoji)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
@@ -13,7 +14,7 @@ local mutations = {
 local currentMutation = mutations[math.random(#mutations)]
 local espVisible = true
 
--- 🖥️ GUI Setup (Compact)
+-- 🖥️ GUI Setup (Dark Glass)
 local gui = Instance.new("ScreenGui")
 gui.Name = "PetMutationFinder"
 gui.ResetOnSpawn = false
@@ -22,27 +23,29 @@ gui.Parent = PlayerGui
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 260, 0, 200)
 frame.Position = UDim2.new(0.4, 0, 0.4, 0)
-frame.BackgroundColor3 = Color3.fromRGB(250, 210, 230) -- pastel pink
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BackgroundTransparency = 0.6 -- glass effect
 frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(220, 180, 200)
-stroke.Thickness = 1.5
+stroke.Color = Color3.fromRGB(0, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.5
 
 -- 🏷️ Title with Emoji
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 36)
 title.Text = "🧬 Pet Mutation Finder v2 ✨"
-title.TextColor3 = Color3.fromRGB(255, 150, 200) -- pastel purple-pink
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
 title.TextXAlignment = Enum.TextXAlignment.Center
 
--- 🔘 Button Creator (Compact & Emoji)
-local function createButton(text, yPos, callback, pastelStyle)
+-- 🔘 Button Creator (Dark Glass)
+local function createButton(text, yPos, callback, tealStyle)
 	local btn = Instance.new("TextButton")
 	btn.Size = UDim2.new(0.9, 0, 0, 36)
 	btn.Position = UDim2.new(0.05, 0, 0, yPos)
@@ -54,25 +57,24 @@ local function createButton(text, yPos, callback, pastelStyle)
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
 
 	local stroke = Instance.new("UIStroke", btn)
+	stroke.Color = Color3.fromRGB(0, 200, 255)
+	stroke.Thickness = 1.5
+	stroke.Transparency = 0.5
 
-	if pastelStyle then
-		btn.BackgroundColor3 = Color3.fromRGB(255, 230, 250)
-		btn.TextColor3 = Color3.fromRGB(200, 100, 200)
-		stroke.Color = Color3.fromRGB(220, 180, 220)
-	else
-		btn.BackgroundColor3 = Color3.fromRGB(230, 240, 250)
-		btn.TextColor3 = Color3.fromRGB(120, 150, 220)
-		stroke.Color = Color3.fromRGB(180, 200, 230)
-	end
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.BackgroundTransparency = 0.6
+	btn.TextColor3 = Color3.fromRGB(0, 200, 255)
 
 	btn.MouseEnter:Connect(function()
 		TweenService:Create(btn, TweenInfo.new(0.15), {
-			BackgroundColor3 = pastelStyle and Color3.fromRGB(245, 215, 245) or Color3.fromRGB(210, 230, 250)
+			BackgroundTransparency = 0.5,
+			TextColor3 = Color3.fromRGB(255, 255, 255)
 		}):Play()
 	end)
 	btn.MouseLeave:Connect(function()
 		TweenService:Create(btn, TweenInfo.new(0.15), {
-			BackgroundColor3 = pastelStyle and Color3.fromRGB(255, 230, 250) or Color3.fromRGB(230, 240, 250)
+			BackgroundTransparency = 0.6,
+			TextColor3 = Color3.fromRGB(0, 200, 255)
 		}):Play()
 	end)
 	btn.MouseButton1Down:Connect(function()
@@ -86,12 +88,12 @@ local function createButton(text, yPos, callback, pastelStyle)
 	return btn
 end
 
--- 🪪 Credit Label (Compact)
+-- 🪪 Credit Label (Dark Glass)
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, 0, 0, 18)
 credit.Position = UDim2.new(0, 0, 1, -20)
 credit.Text = "Tiktok: @yawiyawiyawiz1"
-credit.TextColor3 = Color3.fromRGB(180, 120, 170)
+credit.TextColor3 = Color3.fromRGB(0, 200, 255)
 credit.BackgroundTransparency = 1
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 12
@@ -177,6 +179,6 @@ local function autoAscended()
 	isRunning = false
 end
 
--- 🧪 Final Buttons (Compact & Emoji)
+-- 🧪 Final Buttons (Dark Glass)
 rerollBtn = createButton("🎲 Mutation Reroll", 50, animateReroll, true)
 autoBtn = createButton("🚀 Auto Get Ascended", 100, autoAscended, false)
