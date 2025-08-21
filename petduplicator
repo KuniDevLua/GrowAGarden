@@ -8,32 +8,27 @@ screenGui.Name = "PetDuplicatorGUI"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Soft friendly colors
-local softColors = {
-	Color3.fromRGB(200, 230, 250), -- soft blue
-	Color3.fromRGB(255, 220, 180), -- soft orange
-	Color3.fromRGB(220, 255, 200), -- soft green
-	Color3.fromRGB(255, 200, 220), -- soft pink
-	Color3.fromRGB(240, 240, 255)  -- soft purple
-}
-local nextColor = 1
-
--- Main Frame
+-- Main Frame (Dark Glass)
 local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 320, 0, 200)
 frame.Position = UDim2.new(0.5, -160, 0.5, -100)
-frame.BackgroundColor3 = Color3.fromRGB(245, 245, 250)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BackgroundTransparency = 0.6
 frame.Active = true
 frame.Draggable = true
 frame.Name = "DuplicatorFrame"
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+local frameStroke = Instance.new("UIStroke", frame)
+frameStroke.Color = Color3.fromRGB(0, 200, 255)
+frameStroke.Thickness = 2
+frameStroke.Transparency = 0.5
 
 -- Title with DNA emoji
 local title = Instance.new("TextLabel", frame)
 title.Text = "🧬 Duplicator V1"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 22
-title.TextColor3 = Color3.fromRGB(50, 50, 50)
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 36)
 title.Position = UDim2.new(0, 0, 0, 5)
@@ -44,7 +39,7 @@ closeButton.Text = "X"
 closeButton.Font = Enum.Font.FredokaOne
 closeButton.TextSize = 18
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.BackgroundColor3 = Color3.fromRGB(230, 100, 100)
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 closeButton.Size = UDim2.new(0, 30, 0, 30)
 closeButton.Position = UDim2.new(1, -36, 0, 6)
 Instance.new("UICorner", closeButton)
@@ -57,7 +52,7 @@ local petInfo = Instance.new("TextLabel", frame)
 petInfo.Text = "(Pet/Item Equipped): [None]"
 petInfo.Font = Enum.Font.FredokaOne
 petInfo.TextSize = 16
-petInfo.TextColor3 = Color3.fromRGB(50, 50, 50)
+petInfo.TextColor3 = Color3.fromRGB(0, 200, 255)
 petInfo.BackgroundTransparency = 1
 petInfo.Position = UDim2.new(0, 12, 0, 50)
 petInfo.Size = UDim2.new(1, -24, 0, 24)
@@ -68,13 +63,16 @@ local dupeButton = Instance.new("TextButton", frame)
 dupeButton.Text = "🎲 Duplicate Pet/Item"
 dupeButton.Font = Enum.Font.FredokaOne
 dupeButton.TextSize = 16
-dupeButton.TextColor3 = Color3.fromRGB(50, 50, 50)
-dupeButton.BackgroundColor3 = softColors[nextColor]
-nextColor = nextColor + 1
-if nextColor > #softColors then nextColor = 1 end
+dupeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+dupeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+dupeButton.BackgroundTransparency = 0.6
 dupeButton.Size = UDim2.new(0, 220, 0, 36)
 dupeButton.Position = UDim2.new(0.5, -110, 0, 80)
 Instance.new("UICorner", dupeButton)
+local dupeStroke = Instance.new("UIStroke", dupeButton)
+dupeStroke.Color = Color3.fromRGB(0, 200, 255)
+dupeStroke.Thickness = 1.5
+dupeStroke.Transparency = 0.5
 
 -- Multiplier Setup
 local multiplier = 1
@@ -89,9 +87,14 @@ minusBtn.Position = UDim2.new(0, 0, 0, 0)
 minusBtn.Text = "➖"
 minusBtn.Font = Enum.Font.FredokaOne
 minusBtn.TextSize = 22
-minusBtn.TextColor3 = Color3.fromRGB(50, 50, 50)
-minusBtn.BackgroundColor3 = softColors[1]
+minusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minusBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+minusBtn.BackgroundTransparency = 0.6
 Instance.new("UICorner", minusBtn)
+local minusStroke = Instance.new("UIStroke", minusBtn)
+minusStroke.Color = Color3.fromRGB(0, 200, 255)
+minusStroke.Thickness = 1.2
+minusStroke.Transparency = 0.5
 
 local numLabel = Instance.new("TextLabel", multiFrame)
 numLabel.Size = UDim2.new(0, 100, 1, 0)
@@ -99,8 +102,9 @@ numLabel.Position = UDim2.new(0, 40, 0, 0)
 numLabel.Text = tostring(multiplier)
 numLabel.Font = Enum.Font.FredokaOne
 numLabel.TextSize = 18
-numLabel.TextColor3 = Color3.fromRGB(50, 50, 50)
-numLabel.BackgroundColor3 = softColors[2]
+numLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+numLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+numLabel.BackgroundTransparency = 0.6
 Instance.new("UICorner", numLabel)
 
 local plusBtn = Instance.new("TextButton", multiFrame)
@@ -109,9 +113,14 @@ plusBtn.Position = UDim2.new(0, 140, 0, 0)
 plusBtn.Text = "➕"
 plusBtn.Font = Enum.Font.FredokaOne
 plusBtn.TextSize = 22
-plusBtn.TextColor3 = Color3.fromRGB(50, 50, 50)
-plusBtn.BackgroundColor3 = softColors[3]
+plusBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+plusBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+plusBtn.BackgroundTransparency = 0.6
 Instance.new("UICorner", plusBtn)
+local plusStroke = Instance.new("UIStroke", plusBtn)
+plusStroke.Color = Color3.fromRGB(0, 200, 255)
+plusStroke.Thickness = 1.2
+plusStroke.Transparency = 0.5
 
 -- Button functions
 minusBtn.MouseButton1Click:Connect(function()
@@ -129,7 +138,7 @@ local footer = Instance.new("TextLabel", frame)
 footer.Text = "👤 Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 13
-footer.TextColor3 = Color3.fromRGB(80, 80, 80)
+footer.TextColor3 = Color3.fromRGB(0, 200, 255)
 footer.BackgroundTransparency = 1
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
@@ -159,11 +168,11 @@ local function showError(text)
 	errLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 	errLabel.Position = UDim2.new(0.5, 0, 0.45, 0)
 	errLabel.Size = UDim2.new(0, 260, 0, 40)
-	errLabel.BackgroundColor3 = Color3.fromRGB(255, 180, 180)
+	errLabel.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 	errLabel.Text = text
 	errLabel.Font = Enum.Font.FredokaOne
 	errLabel.TextSize = 16
-	errLabel.TextColor3 = Color3.fromRGB(50, 50, 50)
+	errLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	errLabel.ZIndex = 30
 	Instance.new("UICorner", errLabel)
 	task.delay(2.5, function() errLabel:Destroy() end)
