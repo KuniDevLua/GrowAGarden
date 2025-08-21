@@ -1,45 +1,50 @@
--- 🌸 Pastel Child-Friendly Loading Screen with Footer
+-- 🖤 Dark Glass Loading Screen with Footer
 
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 
--- Add Soft Blur Effect
+-- Soft blur effect
 local blur = Instance.new("BlurEffect")
 blur.Size = 10
 blur.Parent = Lighting
 
--- Create ScreenGui
+-- ScreenGui
 local gui = Instance.new("ScreenGui", playerGui)
-gui.Name = "KuniLoading"
+gui.Name = "KuniLoadingDark"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 
--- Main Panel
+-- Main Panel (Dark Glass)
 local frame = Instance.new("Frame", gui)
 frame.Size = UDim2.new(0, 460, 0, 180)
 frame.Position = UDim2.new(0.5, -230, 0.5, -90)
-frame.BackgroundColor3 = Color3.fromRGB(245, 210, 255)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+frame.BackgroundTransparency = 0.6
 frame.BorderSizePixel = 0
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.4
 
--- Glowing Title
+-- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, -40, 0, 60)
 title.Position = UDim2.new(0, 20, 0, 10)
 title.Text = "Yawi Hub X"
-title.TextColor3 = Color3.fromRGB(255, 100, 220)
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.Font = Enum.Font.FredokaOne
 title.TextScaled = true
 title.BackgroundTransparency = 1
 
--- Loading Label (centered)
+-- Loading Label (center)
 local loading = Instance.new("TextLabel", frame)
 loading.Size = UDim2.new(1, -40, 0, 40)
 loading.Position = UDim2.new(0, 20, 0.5, -20)
 loading.Text = "Loading"
-loading.TextColor3 = Color3.fromRGB(80, 50, 200)
+loading.TextColor3 = Color3.fromRGB(0, 180, 255)
 loading.Font = Enum.Font.FredokaOne
 loading.TextScaled = true
 loading.BackgroundTransparency = 1
@@ -48,36 +53,36 @@ loading.BackgroundTransparency = 1
 task.spawn(function()
 	local visible = true
 	while loading and loading.Parent do
-		loading.TextColor3 = visible and Color3.fromRGB(255, 100, 220) or Color3.fromRGB(150, 50, 200)
+		loading.TextColor3 = visible and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(0, 120, 180)
 		visible = not visible
 		task.wait(0.4)
 	end
 end)
 
--- Loading Bar BG (below loading)
+-- Loading Bar BG
 local barBg = Instance.new("Frame", frame)
 barBg.Size = UDim2.new(1, -40, 0, 18)
 barBg.Position = UDim2.new(0, 20, 0.7, 0)
-barBg.BackgroundColor3 = Color3.fromRGB(230, 200, 255)
+barBg.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
 barBg.BorderSizePixel = 0
 Instance.new("UICorner", barBg).CornerRadius = UDim.new(0, 10)
 
 -- Loading Bar Fill
 local barFill = Instance.new("Frame", barBg)
 barFill.Size = UDim2.new(0, 0, 1, 0)
-barFill.BackgroundColor3 = Color3.fromRGB(255, 120, 220)
+barFill.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
 barFill.BorderSizePixel = 0
 Instance.new("UICorner", barFill).CornerRadius = UDim.new(0, 10)
 
 -- Animate Fill over 5 seconds
 TweenService:Create(barFill, TweenInfo.new(5, Enum.EasingStyle.Sine), {Size = UDim2.new(1, 0, 1, 0)}):Play()
 
--- Footer Label (bottom)
+-- Footer
 local footer = Instance.new("TextLabel", frame)
 footer.Size = UDim2.new(1, -40, 0, 20)
 footer.Position = UDim2.new(0, 20, 1, -30)
 footer.Text = "TikTok: @yawiyawiyawiz"
-footer.TextColor3 = Color3.fromRGB(150, 50, 200)
+footer.TextColor3 = Color3.fromRGB(0, 200, 255)
 footer.Font = Enum.Font.Gotham
 footer.TextScaled = true
 footer.BackgroundTransparency = 1
