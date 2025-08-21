@@ -1,44 +1,40 @@
+-- 🖤 Dark Glass Pet Weight Changer GUI
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
 -- Create GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "PetWeightChanger"
+gui.Name = "PetWeightChangerGlass"
 gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Pastel colors for theme
-local pastelColors = {
-	Color3.fromRGB(255, 182, 193), -- light pink
-	Color3.fromRGB(255, 192, 203), -- pink
-	Color3.fromRGB(255, 228, 225), -- misty rose
-	Color3.fromRGB(255, 239, 213), -- papaya whip
-	Color3.fromRGB(255, 218, 185)  -- peach puff
-}
-local nextColor = 1
-
--- Main Frame
+-- Main Frame (Dark Glass)
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 340, 0, 210)
 frame.Position = UDim2.new(0.5, -170, 0.5, -105)
-frame.BackgroundColor3 = Color3.fromRGB(255, 240, 245) -- soft pastel pink
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+frame.BackgroundTransparency = 0.6
 frame.Active = true
 frame.Draggable = true
 frame.Name = "PetWeightFrame"
 frame.Parent = gui
-
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+
+-- Frame Glow
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.5
 
 -- Title
 local title = Instance.new("TextLabel", frame)
 title.Text = "🧬 Pet Weight Changer"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 18
-title.TextColor3 = pastelColors[nextColor]
-nextColor = nextColor + 1
-if nextColor > #pastelColors then nextColor = 1 end
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 28)
 title.Position = UDim2.new(0, 0, 0, 6)
@@ -50,7 +46,7 @@ petInfoLabel.Position = UDim2.new(0.05, 0, 0, 45)
 petInfoLabel.BackgroundTransparency = 1
 petInfoLabel.Font = Enum.Font.FredokaOne
 petInfoLabel.TextSize = 14
-petInfoLabel.TextColor3 = Color3.fromRGB(160, 50, 90)
+petInfoLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
 petInfoLabel.Text = "(Pet/Tool Equipped)"
 petInfoLabel.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -61,30 +57,30 @@ inputBox.Position = UDim2.new(0.1, 0, 0, 70)
 inputBox.PlaceholderText = "Add Weight"
 inputBox.Font = Enum.Font.FredokaOne
 inputBox.TextSize = 14
-inputBox.TextColor3 = Color3.fromRGB(80, 40, 60)
-inputBox.BackgroundColor3 = pastelColors[3]
+inputBox.TextColor3 = Color3.fromRGB(0, 200, 255)
+inputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 Instance.new("UICorner", inputBox)
 
 -- Apply Button
 local applyBtn = Instance.new("TextButton", frame)
 applyBtn.Size = UDim2.new(0.8, 0, 0, 34)
 applyBtn.Position = UDim2.new(0.1, 0, 0, 110)
-applyBtn.BackgroundColor3 = pastelColors[4]
+applyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 180)
 applyBtn.Text = "Apply Weight"
 applyBtn.Font = Enum.Font.FredokaOne
 applyBtn.TextSize = 14
-applyBtn.TextColor3 = Color3.fromRGB(60, 30, 50)
+applyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", applyBtn)
 
 -- Reset Button
 local resetBtn = Instance.new("TextButton", frame)
 resetBtn.Size = UDim2.new(0.8, 0, 0, 34)
 resetBtn.Position = UDim2.new(0.1, 0, 0, 150)
-resetBtn.BackgroundColor3 = pastelColors[5]
+resetBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 220)
 resetBtn.Text = "Reset Weight"
 resetBtn.Font = Enum.Font.FredokaOne
 resetBtn.TextSize = 14
-resetBtn.TextColor3 = Color3.fromRGB(60, 30, 50)
+resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", resetBtn)
 
 -- Footer inside frame
@@ -94,7 +90,7 @@ footer.Position = UDim2.new(0, 10, 1, -22)
 footer.BackgroundTransparency = 1
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(120, 60, 80)
+footer.TextColor3 = Color3.fromRGB(0, 200, 255)
 footer.Text = "Tiktok: @yawiyawiyawiz"
 footer.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -107,8 +103,8 @@ local function hoverEffect(button, normalColor, hoverColor)
 		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = normalColor}):Play()
 	end)
 end
-hoverEffect(applyBtn, applyBtn.BackgroundColor3, pastelColors[1])
-hoverEffect(resetBtn, resetBtn.BackgroundColor3, pastelColors[2])
+hoverEffect(applyBtn, applyBtn.BackgroundColor3, Color3.fromRGB(0, 160, 220))
+hoverEffect(resetBtn, resetBtn.BackgroundColor3, Color3.fromRGB(0, 180, 250))
 
 -- Helper: Get equipped pet/tool
 local function getEquippedPetTool()
