@@ -7,22 +7,27 @@ screenGui.Name = "KuniPetAgeLeveller"
 screenGui.ResetOnSpawn = false
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Main Frame
+-- Main Frame (Dark Glass)
 local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0, 320, 0, 200)
 frame.Position = UDim2.new(0.5, -160, 0.5, -100)
-frame.BackgroundColor3 = Color3.fromRGB(255, 200, 230) -- pastel pink
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BackgroundTransparency = 0.6
 frame.Active = true
 frame.Draggable = true
 frame.Name = "PetAgeFrame"
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.5
 
 -- Title
 local title = Instance.new("TextLabel", frame)
 title.Text = "🌸 Pet Age Leveller 🌸"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
-title.TextColor3 = Color3.fromRGB(255, 105, 180)
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 5)
@@ -32,7 +37,7 @@ local petInfo = Instance.new("TextLabel", frame)
 petInfo.Text = "Equipped Pet: [None]"
 petInfo.Font = Enum.Font.FredokaOne
 petInfo.TextSize = 16
-petInfo.TextColor3 = Color3.fromRGB(255, 80, 180)
+petInfo.TextColor3 = Color3.fromRGB(0, 200, 255)
 petInfo.BackgroundTransparency = 1
 petInfo.Position = UDim2.new(0, 12, 0, 40)
 petInfo.Size = UDim2.new(1, -24, 0, 24)
@@ -43,29 +48,39 @@ local button = Instance.new("TextButton", frame)
 button.Text = "🎀 Set Age to 50 🎀"
 button.Font = Enum.Font.FredokaOne
 button.TextSize = 16
-button.TextColor3 = Color3.fromRGB(50, 50, 50)
-button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+button.TextColor3 = Color3.fromRGB(255, 255, 255)
+button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+button.BackgroundTransparency = 0.6
 button.Size = UDim2.new(0, 220, 0, 36)
 button.Position = UDim2.new(0.5, -110, 0, 76)
 Instance.new("UICorner", button)
+local btnStroke = Instance.new("UIStroke", button)
+btnStroke.Color = Color3.fromRGB(0, 200, 255)
+btnStroke.Thickness = 1.5
+btnStroke.Transparency = 0.5
 
 -- "Add +1 Age" Button
 local addAgeButton = Instance.new("TextButton", frame)
 addAgeButton.Text = "🌟 Add +1 Age 🌟"
 addAgeButton.Font = Enum.Font.FredokaOne
 addAgeButton.TextSize = 16
-addAgeButton.TextColor3 = Color3.fromRGB(50, 50, 50)
-addAgeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+addAgeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+addAgeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+addAgeButton.BackgroundTransparency = 0.6
 addAgeButton.Size = UDim2.new(0, 220, 0, 36)
 addAgeButton.Position = UDim2.new(0.5, -110, 0, 122)
 Instance.new("UICorner", addAgeButton)
+local addStroke = Instance.new("UIStroke", addAgeButton)
+addStroke.Color = Color3.fromRGB(0, 200, 255)
+addStroke.Thickness = 1.5
+addStroke.Transparency = 0.5
 
 -- Footer
 local footer = Instance.new("TextLabel", frame)
 footer.Text = "Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 13
-footer.TextColor3 = Color3.fromRGB(180, 180, 180)
+footer.TextColor3 = Color3.fromRGB(0, 200, 255)
 footer.BackgroundTransparency = 1
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
