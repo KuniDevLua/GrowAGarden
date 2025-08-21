@@ -1,4 +1,4 @@
--- 🧪 Pet Randomizer GUI (Premium Version with Emojis)
+-- 🧪 Pet Randomizer GUI (Dark Glass Theme Version)
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -12,45 +12,29 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/KuniDevLua/GrowAGarde
 task.wait(5)
 
 -- 🌟 Setup
-local espEnabled = true
+local espEnabled, autoRunning = true, false
 local truePetMap = {}
-local autoRunning = false
 
 -- 🐾 Pet Table
 local petTable = {
-    ["Common Egg"] = { "Dog", "Bunny", "Golden Lab" },
-    ["Uncommon Egg"] = { "Chicken", "Black Bunny", "Cat", "Deer" },
-    ["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer" },
-    ["Legendary Egg"] = { "Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey" },
-    ["Mythical Egg"] = { "Grey Mouse", "Brown Mouse", "Squirrel", "Red Fox", "Red Giant Ant" },
-    ["Bug Egg"] = { "Snail", "Caterpillar", "Giant Ant", "Praying Mantis", "Dragonfly" },
-    ["Bee Egg"] = { "Bee", "Honey Bee", "Bear Bee", "Petal Bee" },
-    ["Anti Bee Egg"] = { "Wasp", "Tarantula Hawk", "Moth", "Butterfly", "Disco Bee" },
-    ["Common Summer Egg"] = { "Starfish", "Seagull", "Crab" },
-    ["Rare Summer Egg"] = { "Sea Turtle", "Flamingo", "Toucan", "Seal", "Orangutan" },
-    ["Oasis Egg"] = { "Meerkat", "Sand Snake", "Axolotl" },
-    ["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara", "Mimic Octopus"},
-    ["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
-    ["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
-    ["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl" },
-    ["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
-    ["Gourmet Egg"] = {
-        "Bagel Bunny", "Pancake Mole", "Sushi Bear", "Spaghetti Sloth", "French Fry Ferret"
-    }
+	["Common Egg"] = { "Dog", "Bunny", "Golden Lab" },
+	["Uncommon Egg"] = { "Chicken", "Black Bunny", "Cat", "Deer" },
+	["Rare Egg"] = { "Pig", "Monkey", "Rooster", "Orange Tabby", "Spotted Deer" },
+	["Legendary Egg"] = { "Cow", "Polar Bear", "Sea Otter", "Turtle", "Silver Monkey" },
+	["Mythical Egg"] = { "Grey Mouse", "Brown Mouse", "Squirrel", "Red Fox", "Red Giant Ant" },
+	["Bug Egg"] = { "Snail", "Caterpillar", "Giant Ant", "Praying Mantis", "Dragonfly" },
+	["Bee Egg"] = { "Bee", "Honey Bee", "Bear Bee", "Petal Bee" },
+	["Anti Bee Egg"] = { "Wasp", "Tarantula Hawk", "Moth", "Butterfly", "Disco Bee" },
+	["Common Summer Egg"] = { "Starfish", "Seagull", "Crab" },
+	["Rare Summer Egg"] = { "Sea Turtle", "Flamingo", "Toucan", "Seal", "Orangutan" },
+	["Oasis Egg"] = { "Meerkat", "Sand Snake", "Axolotl" },
+	["Paradise Egg"] = { "Ostrich", "Peacock", "Capybara", "Mimic Octopus"},
+	["Dinosaur Egg"] = { "Raptor", "Triceratops", "Stegosaurus", "T-Rex", "Pterodactyl", "Brontosaurus" },
+	["Primal Egg"] = { "Spinosaurus", "Ankylosaurus", "Dilophosaurus", "Parasaurolophus", "Iguanodon" },
+	["Night Egg"] = { "Frog", "Hedgehog", "Mole", "Echo Frog", "Night Owl" },
+	["Zen Egg"] = { "Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune" },
+	["Gourmet Egg"] = { "Bagel Bunny", "Pancake Mole", "Sushi Bear", "Spaghetti Sloth", "French Fry Ferret" }
 }
-
--- ✨ Glitch Label
-local function glitchEffect(label)
-	coroutine.wrap(function()
-		local original = label.TextColor3
-		for i = 1, 2 do
-			label.TextColor3 = Color3.new(0, 1, 0)
-			wait(0.07)
-			label.TextColor3 = original
-			wait(0.07)
-		end
-	end)()
-end
 
 -- 👁 ESP
 local function applyESP(eggModel, petName)
@@ -74,22 +58,11 @@ local function applyESP(eggModel, petName)
 	label.TextScaled = true
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.Font = Enum.Font.FredokaOne
-	label.TextStrokeTransparency = 0.3
-
-	local highlight = Instance.new("Highlight", eggModel)
-	highlight.Name = "ESPHighlight"
-	highlight.FillColor = Color3.fromRGB(255, 200, 0)
-	highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-	highlight.FillTransparency = 0.7
-	highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-	highlight.Adornee = eggModel
-
-	glitchEffect(label)
+	label.TextStrokeTransparency = 0.2
 end
-
 local function removeESP(eggModel)
 	if eggModel:FindFirstChild("PetBillboard", true) then eggModel:FindFirstChild("PetBillboard", true):Destroy() end
-	if eggModel:FindFirstChild("ESPHighlight") then eggModel:FindFirstChild("ESPHighlight"):Destroy() end
+	if eggModel:FindFirstChild("ESPHighlight") then eggModel.ESPHighlight:Destroy() end
 end
 
 -- 🔍 Find Eggs
@@ -120,45 +93,47 @@ local function randomizeEggs()
 		applyESP(egg, chosen)
 	end
 end
-
 local function countdownAndRandomize(button)
 	for i = 3, 1, -1 do
-		button.Text = "🎲 Randomizing in: " .. i
+		button.Text = "Randomizing in: " .. i
 		wait(1)
 	end
 	randomizeEggs()
 	button.Text = "🎲 Randomize Pets"
 end
 
--- 🖼️ GUI
+-- 🖼️ GUI (Dark Glass Theme)
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "PetRandomizerGUI"
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 240, 0, 190)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 260, 0, 200)
 frame.Position = UDim2.new(0, 25, 0, 100)
-frame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-frame.Parent = gui
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) -- dark base
+frame.BackgroundTransparency = 0.6 -- semi-transparent for glass effect
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
-local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(255, 200, 200)
-stroke.Thickness = 2
 
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.5
+
+-- Title
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "🎲 Pet Randomizer"
+title.Size = UDim2.new(1, 0, 0, 36)
+title.Text = "🐾 Pet Randomizer"
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 20
-title.TextColor3 = Color3.fromRGB(255, 250, 255) -- very light
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
 title.BackgroundTransparency = 1
+title.TextStrokeTransparency = 0.3
 
--- Drag
+-- Dragging
 local dragBtn = Instance.new("TextButton", title)
 dragBtn.Size = UDim2.new(1, 0, 1, 0)
 dragBtn.Text = ""
 dragBtn.BackgroundTransparency = 1
 local dragging, offset = false, Vector2.zero
-
 dragBtn.MouseButton1Down:Connect(function()
 	dragging = true
 	offset = Vector2.new(mouse.X - frame.Position.X.Offset, mouse.Y - frame.Position.Y.Offset)
@@ -170,62 +145,60 @@ RunService.RenderStepped:Connect(function()
 	end
 end)
 
+-- Footer
 local footer = Instance.new("TextLabel", frame)
 footer.Size = UDim2.new(1, 0, 0, 20)
 footer.Position = UDim2.new(0, 0, 1, -20)
 footer.Text = "👤 Tiktok: @yawiyawiyawiz1"
 footer.Font = Enum.Font.FredokaOne
 footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(255, 250, 255) -- very light
+footer.TextColor3 = Color3.fromRGB(200, 255, 255)
 footer.BackgroundTransparency = 1
 
--- Pastel color list
-local pastelColors = {
-	Color3.fromRGB(255, 176, 224),
-	Color3.fromRGB(187, 222, 251),
-	Color3.fromRGB(255, 236, 179),
-	Color3.fromRGB(200, 230, 201),
-	Color3.fromRGB(225, 190, 231)
-}
-local nextColor = 1
-
+-- Button factory (dark glass, title style)
 local function createButton(text, yPos)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, -20, 0, 32)
-	btn.Position = UDim2.new(0, 10, 0, yPos)
-	btn.BackgroundColor3 = pastelColors[nextColor]
-	btn.TextColor3 = btn.BackgroundColor3:Lerp(Color3.new(1,1,1), 0.85) -- extra light
-	btn.TextStrokeTransparency = 1
-	btn.Font = Enum.Font.FredokaOne
-	btn.TextSize = 14
+	local btn = Instance.new("TextButton", frame)
+	btn.Size = UDim2.new(1, -30, 0, 34)
+	btn.Position = UDim2.new(0, 15, 0, yPos)
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- dark button
+	btn.BackgroundTransparency = 0.6
+	btn.TextColor3 = title.TextColor3
+	btn.Font = title.Font
+	btn.TextSize = title.TextSize
+	btn.TextStrokeTransparency = title.TextStrokeTransparency
 	btn.Text = text
-	btn.Parent = frame
-	btn.AutoButtonColor = true
+	btn.AutoButtonColor = false
+
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 	local stroke = Instance.new("UIStroke", btn)
-	stroke.Color = Color3.fromRGB(130, 130, 130)
-	stroke.Thickness = 1
+	stroke.Color = Color3.fromRGB(0, 200, 255)
+	stroke.Thickness = 1.5
+	stroke.Transparency = 0.5
 
-	nextColor = nextColor + 1
-	if nextColor > #pastelColors then nextColor = 1 end
-
+	-- Hover effect
 	btn.MouseEnter:Connect(function()
-		btn.BackgroundColor3 = btn.BackgroundColor3:Lerp(Color3.new(1,1,1), 0.15)
+		TweenService:Create(btn, TweenInfo.new(0.2), {
+			BackgroundTransparency = 0.5,
+			TextColor3 = Color3.fromRGB(255, 255, 255)
+		}):Play()
 	end)
 	btn.MouseLeave:Connect(function()
-		btn.BackgroundColor3 = btn.BackgroundColor3:Lerp(Color3.new(0,0,0), 0.15)
+		TweenService:Create(btn, TweenInfo.new(0.2), {
+			BackgroundTransparency = 0.6,
+			TextColor3 = title.TextColor3
+		}):Play()
 	end)
 
 	return btn
 end
 
 -- Buttons
-local randomBtn = createButton("🎲 Randomize Pets", 36)
+local randomBtn = createButton("🎲 Randomize Pets", 40)
 randomBtn.MouseButton1Click:Connect(function()
 	countdownAndRandomize(randomBtn)
 end)
 
-local autoBtn = createButton("⚙️ Auto Randomize", 72)
+local autoBtn = createButton("⚙️ Auto Randomize", 80)
 autoBtn.MouseButton1Click:Connect(function()
 	autoRunning = not autoRunning
 	autoBtn.Text = autoRunning and "⚙️ Auto Randomize (ON)" or "⚙️ Auto Randomize (OFF)"
@@ -237,10 +210,10 @@ autoBtn.MouseButton1Click:Connect(function()
 	end)()
 end)
 
-local toggleBtn = createButton("🔍 Show ESP", 108)
+local toggleBtn = createButton("🔍 Show ESP", 120)
 toggleBtn.MouseButton1Click:Connect(function()
 	espEnabled = not espEnabled
-	toggleBtn.Text = espEnabled and "🔍 Show ESP (ON)" or "❌ Close ESP (OFF)"
+	toggleBtn.Text = espEnabled and "🔍 Show ESP (ON)" or "❌ ESP (OFF)"
 	for _, egg in pairs(getNearbyEggs(60)) do
 		if espEnabled then
 			applyESP(egg, truePetMap[egg])
