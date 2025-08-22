@@ -10,9 +10,9 @@ gui.Name = "YawiLibraryUI"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 
--- Main Window (📏 mas maliit)
+-- Main Window (Compact)
 local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 300, 0, 340) -- compact size
+main.Size = UDim2.new(0, 300, 0, 340)
 main.Position = UDim2.new(0.5, -150, 0.5, -170)
 main.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 main.BackgroundTransparency = 0.25
@@ -47,7 +47,7 @@ end)
 
 -- Header
 local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 40) -- mas maliit header
+header.Size = UDim2.new(1, 0, 0, 40)
 header.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
 header.BackgroundTransparency = 0.2
 Instance.new("UICorner", header).CornerRadius = UDim.new(0, 14)
@@ -128,11 +128,11 @@ minimize.MouseButton1Click:Connect(function()
     if minimized then
         container.Visible = false
         footer.Visible = false
-        main.Size = UDim2.new(0, 300, 0, 40) -- header only
+        main.Size = UDim2.new(0, 300, 0, 40)
     else
         container.Visible = true
         footer.Visible = true
-        main.Size = UDim2.new(0, 300, 0, 340) -- restore size
+        main.Size = UDim2.new(0, 300, 0, 340)
     end
 end)
 
@@ -171,7 +171,7 @@ do
     end)
 end
 
--- ✅ Button Creator (hindi binago, same as original mo)
+-- ✅ Button Creator
 local function createButton(text, url)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 50)
@@ -233,7 +233,7 @@ local function createButton(text, url)
     end)
 end
 
--- Same buttons as original
+-- Buttons
 createButton("Moon Cat Ability Range Changer", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/MoonCatChanger")
 createButton("Project Reverse (Keyless)", "https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua")
 createButton("Yawi Hub X (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa")
@@ -242,3 +242,8 @@ createButton("Pet Weight Changer (Keyless)", "https://raw.githubusercontent.com/
 createButton("Duplicate Tag Remover (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover")
 createButton("Speed Hub X (Keyless)", "https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua")
 createButton("Nat Hub Loader (Key)", "https://get.nathub.xyz/loader")
+
+-- New Buttons
+createButton("ThanHub (KEYLESS)", "https://raw.githubusercontent.com/thantzy/thanhub/refs/heads/main/thanv1")
+createButton("Limit Hub (KEY)", "https://raw.githubusercontent.com/FakeModz/LimitHub/refs/heads/main/LimitHub_Luarmor_E.lua")
+createButton("ThunderZ Hub (KEYLESS)", "https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua")
