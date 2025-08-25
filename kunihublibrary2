@@ -1,4 +1,4 @@
--- 🌸 Yawi Library Glassmorphism GUI (Compact + Draggable + Minimize, Left-Side)
+-- 🌸 Yawi Library Glassmorphism GUI 
 
 local player = game:GetService("Players").LocalPlayer
 local UIS = game:GetService("UserInputService")
