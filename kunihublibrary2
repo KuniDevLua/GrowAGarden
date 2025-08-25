@@ -246,5 +246,10 @@ createButton("ThanHub (KEYLESS)", "https://raw.githubusercontent.com/thantzy/tha
 createButton("Limit Hub (KEY)", "https://raw.githubusercontent.com/FakeModz/LimitHub/refs/heads/main/LimitHub_Luarmor_E.lua")
 createButton("ThunderZ Hub (KEYLESS)", "https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua")
 
--- Rayfield Dark Spawner Button
-createButton("Rayfield Dark Spawner", "https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua")
+-- Add Rayfield Dark Spawner button here
+createButton("Rayfield Dark Spawner", ""):MouseButton1Click:Connect(function()
+    pcall(function()
+        local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+        Spawner.Load()
+    end)
+end)
