@@ -1,121 +1,51 @@
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- 💎 Dark Glass Pet Mutation Finder GUI by Kuni (Compact, Child-Friendly, Emoji)
+-- Window Setup
+local Window = Rayfield:CreateWindow({
+    Name = "Pet Mutation Finder v2",
+    LoadingTitle = "Pet Mutation Finder",
+    LoadingSubtitle = "by Kuni",
+    ConfigurationSaving = {Enabled = false},
+    Discord = {Enabled = false}
+})
+
+-- Tabs
+local MainTab = Window:CreateTab("Main")
+local FinderTab = Window:CreateTab("Finder")
+local CreditsTab = Window:CreateTab("Credits")
+
+-- Services
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local PlayerGui = player:WaitForChild("PlayerGui")
 local Workspace = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
+-- Mutations
 local mutations = {
-	"Shiny", "Inverted", "Frozen", "Windy", "Golden", "Mega", "Tiny",
-	"Tranquil", "IronSkin", "Radiant", "Rainbow", "Shocked", "Ascended"
+    "Shiny", "Inverted", "Frozen", "Windy", "Golden", "Mega", "Tiny",
+    "Tranquil", "IronSkin", "Radiant", "Rainbow", "Shocked", "Ascended"
 }
 local currentMutation = mutations[math.random(#mutations)]
+local espLabel
 local espVisible = true
 
--- 🖥️ GUI Setup (Dark Glass)
-local gui = Instance.new("ScreenGui")
-gui.Name = "PetMutationFinder"
-gui.ResetOnSpawn = false
-gui.Parent = PlayerGui
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 260, 0, 200)
-frame.Position = UDim2.new(0.4, 0, 0.4, 0)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-frame.BackgroundTransparency = 0.6 -- glass effect
-frame.Active = true
-frame.Draggable = true
-frame.Parent = gui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
-local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0, 200, 255)
-stroke.Thickness = 2
-stroke.Transparency = 0.5
-
--- 🏷️ Title with Emoji
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 36)
-title.Text = "🧬 Pet Mutation Finder v2 ✨"
-title.TextColor3 = Color3.fromRGB(0, 200, 255)
-title.BackgroundTransparency = 1
-title.Font = Enum.Font.FredokaOne
-title.TextSize = 20
-title.TextXAlignment = Enum.TextXAlignment.Center
-
--- 🔘 Button Creator (Dark Glass)
-local function createButton(text, yPos, callback, tealStyle)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0.9, 0, 0, 36)
-	btn.Position = UDim2.new(0.05, 0, 0, yPos)
-	btn.Text = text
-	btn.Font = Enum.Font.FredokaOne
-	btn.TextSize = 16
-	btn.AutoButtonColor = false
-	btn.Parent = frame
-	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
-
-	local stroke = Instance.new("UIStroke", btn)
-	stroke.Color = Color3.fromRGB(0, 200, 255)
-	stroke.Thickness = 1.5
-	stroke.Transparency = 0.5
-
-	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-	btn.BackgroundTransparency = 0.6
-	btn.TextColor3 = Color3.fromRGB(0, 200, 255)
-
-	btn.MouseEnter:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.15), {
-			BackgroundTransparency = 0.5,
-			TextColor3 = Color3.fromRGB(255, 255, 255)
-		}):Play()
-	end)
-	btn.MouseLeave:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.15), {
-			BackgroundTransparency = 0.6,
-			TextColor3 = Color3.fromRGB(0, 200, 255)
-		}):Play()
-	end)
-	btn.MouseButton1Down:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.05), {Position = btn.Position + UDim2.new(0, 0, 0, 2)}):Play()
-	end)
-	btn.MouseButton1Up:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.05), {Position = UDim2.new(0.05, 0, 0, yPos)}):Play()
-	end)
-	btn.MouseButton1Click:Connect(callback)
-
-	return btn
-end
-
--- 🪪 Credit Label (Dark Glass)
-local credit = Instance.new("TextLabel", frame)
-credit.Size = UDim2.new(1, 0, 0, 18)
-credit.Position = UDim2.new(0, 0, 1, -20)
-credit.Text = "Tiktok: @yawiyawiyawiz1"
-credit.TextColor3 = Color3.fromRGB(0, 200, 255)
-credit.BackgroundTransparency = 1
-credit.Font = Enum.Font.Gotham
-credit.TextSize = 12
-credit.TextXAlignment = Enum.TextXAlignment.Center
-
--- 🔍 Mutation Machine Finder
+-- Mutation Machine Finder
 local function findMachine()
-	for _, obj in pairs(Workspace:GetDescendants()) do
-		if obj:IsA("Model") and obj.Name:lower():find("mutation") then
-			return obj
-		end
-	end
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj.Name:lower():find("mutation") then
+            return obj
+        end
+    end
 end
 
 local machine = findMachine()
 if not machine or not machine:FindFirstChildWhichIsA("BasePart") then
-	warn("Pet Mutation Machine not found.")
-	return
+    warn("Pet Mutation Machine not found.")
+    return
 end
 local basePart = machine:FindFirstChildWhichIsA("BasePart")
 
--- 💡 ESP Label
+-- ESP Label
 local espGui = Instance.new("BillboardGui", basePart)
 espGui.Name = "MutationESP"
 espGui.Adornee = basePart
@@ -123,7 +53,7 @@ espGui.Size = UDim2.new(0, 180, 0, 36)
 espGui.StudsOffset = Vector3.new(0, 3, 0)
 espGui.AlwaysOnTop = true
 
-local espLabel = Instance.new("TextLabel", espGui)
+espLabel = Instance.new("TextLabel", espGui)
 espLabel.Size = UDim2.new(1, 0, 1, 0)
 espLabel.BackgroundTransparency = 1
 espLabel.Font = Enum.Font.GothamBold
@@ -132,53 +62,54 @@ espLabel.TextStrokeTransparency = 0.2
 espLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 espLabel.Text = currentMutation
 
--- 🌈 Rainbow Animation
+-- Rainbow Animation
 local hue = 0
 RunService.RenderStepped:Connect(function()
-	if espVisible then
-		hue = (hue + 0.005) % 1
-		espLabel.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
-	end
+    if espVisible and espLabel then
+        hue = (hue + 0.005) % 1
+        espLabel.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
+    end
 end)
 
--- 🎲 Reroll
-local canClick = true
-local function animateReroll()
-	if not canClick then return end
-	canClick = false
-	rerollBtn.Text = "🎲 Rerolling..."
-	for i = 1, 20 do
-		espLabel.Text = mutations[math.random(#mutations)]
-		wait(0.1)
-	end
-	currentMutation = mutations[math.random(#mutations)]
-	espLabel.Text = currentMutation
-	rerollBtn.Text = "🎲 Mutation Reroll"
-	wait(2)
-	canClick = true
-end
+-- Buttons
+local rerollBtn
+local autoBtn
 
--- 🚀 Auto Ascended
-local isRunning = false
-local function autoAscended()
-	if isRunning then return end
-	isRunning = true
-	autoBtn.Text = "✨ Getting Ascended..."
-	local t = 0
-	while t < 40 do
-		currentMutation = mutations[math.random(#mutations - 1)]
-		espLabel.Text = currentMutation
-		wait(1)
-		t += 1
-	end
-	currentMutation = "Ascended"
-	espLabel.Text = currentMutation
-	autoBtn.Text = "🌟 ASCENDED FOUND!"
-	wait(2)
-	autoBtn.Text = "🚀 Auto Get Ascended"
-	isRunning = false
-end
+-- Reroll Button
+rerollBtn = MainTab:CreateButton({
+    Name = "Mutation Reroll",
+    Callback = function()
+        if not espLabel then return end
+        rerollBtn.Text = "Rerolling..."
+        for i = 1, 20 do
+            espLabel.Text = mutations[math.random(#mutations)]
+            task.wait(0.1)
+        end
+        currentMutation = mutations[math.random(#mutations)]
+        espLabel.Text = currentMutation
+        rerollBtn.Text = "Mutation Reroll"
+    end
+})
 
--- 🧪 Final Buttons (Dark Glass)
-rerollBtn = createButton("🎲 Mutation Reroll", 50, animateReroll, true)
-autoBtn = createButton("🚀 Auto Get Ascended", 100, autoAscended, false)
+-- Auto Ascended Button
+autoBtn = MainTab:CreateButton({
+    Name = "Auto Get Ascended",
+    Callback = function()
+        if not espLabel then return end
+        autoBtn.Text = "Getting Ascended..."
+        for t = 1, 40 do
+            currentMutation = mutations[math.random(#mutations - 1)]
+            espLabel.Text = currentMutation
+            task.wait(1)
+        end
+        currentMutation = "Ascended"
+        espLabel.Text = currentMutation
+        autoBtn.Text = "ASCENDED FOUND!"
+        task.wait(2)
+        autoBtn.Text = "Auto Get Ascended"
+    end
+})
+
+-- Credits
+CreditsTab:CreateLabel("Made by Kuni")
+CreditsTab:CreateLabel("TikTok: @yawiyawiyawiz1")
