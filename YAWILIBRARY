@@ -34,7 +34,7 @@ createButton(PetsTab, "Pet Randomizer (Keyless)", "https://raw.githubusercontent
 createButton(PetsTab, "Pet Weight Changer (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger")
 
 --// Script Hubs
-createButton(HubsTab, "Yawi Hub X (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa")
+createButton(HubsTab, "Kuni Hub X (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa")
 createButton(HubsTab, "Project Reverse (Keyless)", "https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua")
 createButton(HubsTab, "Speed Hub X (Keyless)", "https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua")
 createButton(HubsTab, "Nat Hub Loader (Key)", "https://get.nathub.xyz/loader")
