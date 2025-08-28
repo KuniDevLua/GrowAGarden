@@ -1,115 +1,35 @@
--- 🖤 Dark Glass Pet Weight Changer GUI
-
+--// Services
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 
--- Create GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "PetWeightChangerGlass"
-gui.ResetOnSpawn = false
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.Parent = player:WaitForChild("PlayerGui")
+--// Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Main Frame (Dark Glass)
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 340, 0, 210)
-frame.Position = UDim2.new(0.5, -170, 0.5, -105)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-frame.BackgroundTransparency = 0.6
-frame.Active = true
-frame.Draggable = true
-frame.Name = "PetWeightFrame"
-frame.Parent = gui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+--// Window
+local Window = Rayfield:CreateWindow({
+    Name = "Pet Weight Changer V1",
+    LoadingTitle = "Pet Weight Changer",
+    LoadingSubtitle = "by yawiyawiyawiz",
+    ConfigurationSaving = { Enabled = false },
+    Discord = { Enabled = false },
+    KeySystem = false
+})
 
--- Frame Glow
-local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0, 200, 255)
-stroke.Thickness = 2
-stroke.Transparency = 0.5
+--// Tabs
+local MainTab = Window:CreateTab("Main", 4483362458)
+local InfoTab = Window:CreateTab("Info", 4483362458)
 
--- Title
-local title = Instance.new("TextLabel", frame)
-title.Text = "🧬 Pet Weight Changer"
-title.Font = Enum.Font.FredokaOne
-title.TextSize = 18
-title.TextColor3 = Color3.fromRGB(0, 200, 255)
-title.BackgroundTransparency = 1
-title.Size = UDim2.new(1, 0, 0, 28)
-title.Position = UDim2.new(0, 0, 0, 6)
+-- Equipped Info Label
+local equippedLabel = MainTab:CreateLabel("(Pet/Tool Equipped): [None]")
 
--- Pet info label
-local petInfoLabel = Instance.new("TextLabel", frame)
-petInfoLabel.Size = UDim2.new(0.9, 0, 0, 20)
-petInfoLabel.Position = UDim2.new(0.05, 0, 0, 45)
-petInfoLabel.BackgroundTransparency = 1
-petInfoLabel.Font = Enum.Font.FredokaOne
-petInfoLabel.TextSize = 14
-petInfoLabel.TextColor3 = Color3.fromRGB(0, 180, 255)
-petInfoLabel.Text = "(Pet/Tool Equipped)"
-petInfoLabel.TextXAlignment = Enum.TextXAlignment.Center
+-- Cache original values per tool so scaling is stable and reversible
+-- originalCache[tool] = { {inst = <Instance>, kind = "Mesh"/"MeshPart", original = Vector3}, ... }
+local originalCache = {}
 
--- Input box for weight
-local inputBox = Instance.new("TextBox", frame)
-inputBox.Size = UDim2.new(0.8, 0, 0, 34)
-inputBox.Position = UDim2.new(0.1, 0, 0, 70)
-inputBox.PlaceholderText = "Add Weight"
-inputBox.Font = Enum.Font.FredokaOne
-inputBox.TextSize = 14
-inputBox.TextColor3 = Color3.fromRGB(0, 200, 255)
-inputBox.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-Instance.new("UICorner", inputBox)
-
--- Apply Button
-local applyBtn = Instance.new("TextButton", frame)
-applyBtn.Size = UDim2.new(0.8, 0, 0, 34)
-applyBtn.Position = UDim2.new(0.1, 0, 0, 110)
-applyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 180)
-applyBtn.Text = "Apply Weight"
-applyBtn.Font = Enum.Font.FredokaOne
-applyBtn.TextSize = 14
-applyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", applyBtn)
-
--- Reset Button
-local resetBtn = Instance.new("TextButton", frame)
-resetBtn.Size = UDim2.new(0.8, 0, 0, 34)
-resetBtn.Position = UDim2.new(0.1, 0, 0, 150)
-resetBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 220)
-resetBtn.Text = "Reset Weight"
-resetBtn.Font = Enum.Font.FredokaOne
-resetBtn.TextSize = 14
-resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-Instance.new("UICorner", resetBtn)
-
--- Footer inside frame
-local footer = Instance.new("TextLabel", frame)
-footer.Size = UDim2.new(1, -20, 0, 16)
-footer.Position = UDim2.new(0, 10, 1, -22)
-footer.BackgroundTransparency = 1
-footer.Font = Enum.Font.FredokaOne
-footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(0, 200, 255)
-footer.Text = "Tiktok: @yawiyawiyawiz"
-footer.TextXAlignment = Enum.TextXAlignment.Center
-
--- Hover effect
-local function hoverEffect(button, normalColor, hoverColor)
-	button.MouseEnter:Connect(function()
-		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = hoverColor}):Play()
-	end)
-	button.MouseLeave:Connect(function()
-		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = normalColor}):Play()
-	end)
-end
-hoverEffect(applyBtn, applyBtn.BackgroundColor3, Color3.fromRGB(0, 160, 220))
-hoverEffect(resetBtn, resetBtn.BackgroundColor3, Color3.fromRGB(0, 180, 250))
-
--- Helper: Get equipped pet/tool
-local function getEquippedPetTool()
-	local char = player.Character or player.CharacterAdded:Wait()
-	for _, tool in pairs(char:GetChildren()) do
+local function getEquippedTool()
+	character = player.Character or player.CharacterAdded:Wait()
+	for _, tool in pairs(character:GetChildren()) do
 		if tool:IsA("Tool") then
 			return tool
 		end
@@ -117,68 +37,142 @@ local function getEquippedPetTool()
 	return nil
 end
 
--- Set pet/tool weight
-local function setPetWeight(tool, weight)
-	for _, obj in ipairs(tool:GetChildren()) do
-		if obj:IsA("BasePart") then
-			local mesh = obj:FindFirstChildOfClass("SpecialMesh")
-			if mesh then
-				mesh.Scale = Vector3.new(weight, weight, weight)
-			else
-				obj.Size = Vector3.new(weight, weight, weight)
+-- Capture original scales/sizes for meshes and MeshParts inside the tool
+local function captureOriginals(tool)
+	if not tool or not tool.Parent then return end
+	if originalCache[tool] then return end
+
+	local list = {}
+	for _, desc in ipairs(tool:GetDescendants()) do
+		-- SpecialMesh / BlockMesh / FileMesh all have .Scale
+		if desc:IsA("SpecialMesh") or desc:IsA("BlockMesh") or desc:IsA("FileMesh") then
+			local s = desc.Scale
+			if typeof(s) ~= "Vector3" then s = Vector3.new(1,1,1) end
+			table.insert(list, { inst = desc, kind = "Mesh", original = s })
+		-- MeshPart: store its Size (most meshparts render the visual)
+		elseif desc:IsA("MeshPart") then
+			local sz = desc.Size
+			if typeof(sz) ~= "Vector3" then sz = Vector3.new(1,1,1) end
+			table.insert(list, { inst = desc, kind = "MeshPart", original = sz })
+		end
+	end
+
+	originalCache[tool] = list
+end
+
+-- Apply factor relative to originals (preserves proportions)
+local function applyFactor(tool, factor)
+	if not tool then return end
+	captureOriginals(tool)
+	local list = originalCache[tool]
+	if not list or #list == 0 then return end
+
+	for _, entry in ipairs(list) do
+		-- guard: instance might be destroyed or removed
+		if entry.inst and entry.inst.Parent then
+			if entry.kind == "Mesh" then
+				-- entry.original is the original mesh.Scale
+				local orig = entry.original or Vector3.new(1,1,1)
+				entry.inst.Scale = Vector3.new(orig.X * factor, orig.Y * factor, orig.Z * factor)
+			elseif entry.kind == "MeshPart" then
+				local orig = entry.original or Vector3.new(1,1,1)
+				entry.inst.Size = Vector3.new(orig.X * factor, orig.Y * factor, orig.Z * factor)
 			end
 		end
 	end
 end
 
--- Update pet info label text
-local function updatePetInfoLabel(text)
-	petInfoLabel.Text = text
+-- Reset to exact originals
+local function resetToOriginal(tool)
+	if not tool then return end
+	local list = originalCache[tool]
+	if not list then return end
+
+	for _, entry in ipairs(list) do
+		if entry.inst and entry.inst.Parent then
+			if entry.kind == "Mesh" then
+				entry.inst.Scale = entry.original or Vector3.new(1,1,1)
+			elseif entry.kind == "MeshPart" then
+				entry.inst.Size = entry.original or Vector3.new(1,1,1)
+			end
+		end
+	end
+
+	-- remove cache so we can recapture if tool respawns later
+	originalCache[tool] = nil
 end
 
--- Apply Button Logic with 10-sec loading
-applyBtn.MouseButton1Click:Connect(function()
-	local tool = getEquippedPetTool()
-	if not tool then
-		updatePetInfoLabel("(No Equipped Pet/Tool detected)")
-		return
+-- UI: input and buttons
+local WeightBox = MainTab:CreateInput({
+	Name = "Enter Weight Factor",
+	PlaceholderText = "Example: 2 (double size), 0.5 (half size)",
+	RemoveTextAfterFocusLost = false,
+	Callback = function(Text) end,
+})
+
+MainTab:CreateButton({
+	Name = "Apply Weight",
+	Callback = function()
+		local tool = getEquippedTool()
+		if not tool then
+			equippedLabel:Set("(No Equipped Pet/Tool detected)")
+			Rayfield:Notify({ Title = "Error", Content = "No equipped tool found", Duration = 2 })
+			return
+		end
+
+		local txt = WeightBox.CurrentValue or WeightBox:Get()
+		local factor = tonumber(txt)
+		if not factor or factor <= 0 then
+			equippedLabel:Set("(Enter valid weight factor)")
+			Rayfield:Notify({ Title = "Error", Content = "Enter a valid number > 0", Duration = 2 })
+			return
+		end
+
+		-- countdown (non-blocking feel via notifications)
+		for i = 10, 1, -1 do
+			Rayfield:Notify({ Title = "Applying", Content = "Applying in " .. i .. "s", Duration = 1 })
+			task.wait(1)
+		end
+
+		applyFactor(tool, factor)
+		equippedLabel:Set("(Applied weight factor: x" .. tostring(factor) .. ")")
+		Rayfield:Notify({ Title = "Done", Content = "Applied factor x" .. tostring(factor), Duration = 2 })
 	end
+})
 
-	local weight = tonumber(inputBox.Text)
-	if not weight or weight <= 0 then
-		updatePetInfoLabel("(Enter valid weight)")
-		return
+MainTab:CreateButton({
+	Name = "Reset Weight",
+	Callback = function()
+		local tool = getEquippedTool()
+		if not tool then
+			equippedLabel:Set("(No Equipped Pet/Tool detected)")
+			return
+		end
+		resetToOriginal(tool)
+		equippedLabel:Set("(Reset to original)")
+		Rayfield:Notify({ Title = "Reset", Content = "Restored original sizes", Duration = 2 })
 	end
+})
 
-	-- 10-second loading countdown
-	for i = 10, 1, -1 do
-		applyBtn.Text = "Loading " .. i .. "s"
-		task.wait(1)
-	end
-
-	setPetWeight(tool, weight)
-	updatePetInfoLabel("(Pet/Tool Weight Applied)")
-	applyBtn.Text = "Apply Weight"
-end)
-
--- Reset Button Logic
-resetBtn.MouseButton1Click:Connect(function()
-	local tool = getEquippedPetTool()
-	if tool then
-		setPetWeight(tool, 1)
-		updatePetInfoLabel("(Pet/Tool Equipped)")
-	end
-end)
-
--- Live update pet info every 0.5 sec
+-- Live Info Update + auto-capture when new tool equipped
+local lastTool = nil
 task.spawn(function()
 	while true do
-		local tool = getEquippedPetTool()
+		local tool = getEquippedTool()
 		if tool then
-			updatePetInfoLabel("(Pet/Tool Equipped)")
+			equippedLabel:Set("(Pet/Tool Equipped): " .. tool.Name)
+			if tool ~= lastTool then
+				-- capture originals for this tool on first equip
+				captureOriginals(tool)
+				lastTool = tool
+			end
 		else
-			updatePetInfoLabel("(No Equipped Pet/Tool detected)")
+			equippedLabel:Set("(No Equipped Pet/Tool detected)")
+			lastTool = nil
 		end
-		task.wait(0.5)
+		task.wait(1)
 	end
 end)
+
+-- Info Footer
+InfoTab:CreateLabel("Tiktok: @yawiyawiyawiz")
