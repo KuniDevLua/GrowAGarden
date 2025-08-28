@@ -1,248 +1,53 @@
--- 🌸 Yawi Library Glassmorphism GUI 
+-- Rayfield UI Loader by Kuni (Organized Tabs)
 
-local player = game:GetService("Players").LocalPlayer
-local UIS = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "YawiLibraryUI"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
+--// Main Window
+local Window = Rayfield:CreateWindow({
+    Name = "Script Loader by Kuni",
+    LoadingTitle = "Grow A Garden",
+    LoadingSubtitle = "Converted from Yawi Library",
+    KeySystem = false,
+})
 
--- Main Window (Compact)
-local main = Instance.new("Frame", gui)
-main.Size = UDim2.new(0, 300, 0, 340)
-main.Position = UDim2.new(0, 20, 0.5, -170)
-main.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-main.BackgroundTransparency = 0.25
-main.BorderSizePixel = 0
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 14)
+--// Tabs
+local PetsTab = Window:CreateTab("Pet Scripts")
+local HubsTab = Window:CreateTab("Script Hubs")
+local UtilsTab = Window:CreateTab("Utilities")
 
--- Glass Blur
-local glass = Instance.new("ImageLabel", main)
-glass.Size = UDim2.new(1, 40, 1, 40)
-glass.Position = UDim2.new(0, -20, 0, -20)
-glass.BackgroundTransparency = 1
-glass.ZIndex = -2
-glass.Image = "rbxassetid://1316045217"
-glass.ImageTransparency = 0.85
-glass.ImageColor3 = Color3.fromRGB(255, 255, 255)
-glass.ScaleType = Enum.ScaleType.Slice
-glass.SliceCenter = Rect.new(10, 10, 118, 118)
-
--- Neon Stroke
-local neon = Instance.new("UIStroke", main)
-neon.Thickness = 2
-neon.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-neon.LineJoinMode = Enum.LineJoinMode.Round
-spawn(function()
-    local hue = 0
-    while main and main.Parent do
-        hue = (hue + 0.0015) % 1
-        neon.Color = Color3.fromHSV(hue, 0.6, 1)
-        RunService.RenderStepped:Wait()
-    end
-end)
-
--- Header
-local header = Instance.new("Frame", main)
-header.Size = UDim2.new(1, 0, 0, 40)
-header.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-header.BackgroundTransparency = 0.2
-Instance.new("UICorner", header).CornerRadius = UDim.new(0, 14)
-
-local title = Instance.new("TextLabel", header)
-title.Size = UDim2.new(1, -120, 1, 0)
-title.Position = UDim2.new(0, 15, 0, 0)
-title.Text = "Yawi Library"
-title.Font = Enum.Font.GothamBold
-title.TextSize = 18
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.BackgroundTransparency = 1
-title.TextXAlignment = Enum.TextXAlignment.Left
-
--- Close Button
-local close = Instance.new("TextButton", header)
-close.Size = UDim2.new(0, 30, 0, 30)
-close.Position = UDim2.new(1, -36, 0.5, -15)
-close.Text = "X"
-close.Font = Enum.Font.GothamBold
-close.TextSize = 16
-close.TextColor3 = Color3.new(1,1,1)
-close.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-close.BackgroundTransparency = 0.2
-Instance.new("UICorner", close).CornerRadius = UDim.new(1, 0)
-close.MouseButton1Click:Connect(function() gui:Destroy() end)
-
--- Minimize Button
-local minimize = Instance.new("TextButton", header)
-minimize.Size = UDim2.new(0, 30, 0, 30)
-minimize.Position = UDim2.new(1, -72, 0.5, -15)
-minimize.Text = "-"
-minimize.Font = Enum.Font.GothamBold
-minimize.TextSize = 20
-minimize.TextColor3 = Color3.new(1,1,1)
-minimize.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-minimize.BackgroundTransparency = 0.2
-Instance.new("UICorner", minimize).CornerRadius = UDim.new(1, 0)
-
--- Container + Scroll
-local container = Instance.new("Frame", main)
-container.Position = UDim2.new(0, 10, 0, 50)
-container.Size = UDim2.new(1, -20, 1, -70)
-container.BackgroundTransparency = 1
-
-local scrolling = Instance.new("ScrollingFrame", container)
-scrolling.Size = UDim2.new(1, 0, 1, 0)
-scrolling.CanvasSize = UDim2.new(0, 0, 0, 0)
-scrolling.BackgroundTransparency = 1
-scrolling.ScrollBarThickness = 5
-scrolling.AutomaticCanvasSize = Enum.AutomaticSize.Y
-
-local layout = Instance.new("UIListLayout", scrolling)
-layout.Padding = UDim.new(0, 6)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-
-local padding = Instance.new("UIPadding", scrolling)
-padding.PaddingTop = UDim.new(0, 8)
-padding.PaddingBottom = UDim.new(0, 8)
-padding.PaddingLeft = UDim.new(0, 8)
-padding.PaddingRight = UDim.new(0, 8)
-
--- Footer
-local footer = Instance.new("TextLabel", main)
-footer.Size = UDim2.new(1, 0, 0, 20)
-footer.Position = UDim2.new(0, 0, 1, -20)
-footer.Text = "TikTok: @yawiyawiyawiz"
-footer.Font = Enum.Font.GothamSemibold
-footer.TextSize = 12
-footer.TextColor3 = Color3.fromRGB(180, 180, 180)
-footer.BackgroundTransparency = 1
-footer.TextXAlignment = Enum.TextXAlignment.Center
-
--- Minimize Logic
-local minimized = false
-minimize.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    if minimized then
-        container.Visible = false
-        footer.Visible = false
-        main.Size = UDim2.new(0, 300, 0, 40)
-    else
-        container.Visible = true
-        footer.Visible = true
-        main.Size = UDim2.new(0, 300, 0, 340)
-    end
-end)
-
--- Drag System
-do
-    local dragging, dragInput, startPos, startInput
-    header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            startPos = input.Position
-            startInput = main.Position
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
+--// Helper function for buttons
+local function createButton(tab, name, url)
+    tab:CreateButton({
+        Name = name,
+        Callback = function()
+            pcall(function()
+                loadstring(game:HttpGet(url))()
             end)
-        end
-    end)
-
-    header.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    UIS.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - startPos
-            main.Position = UDim2.new(
-                startInput.X.Scale,
-                startInput.X.Offset + delta.X,
-                startInput.Y.Scale,
-                startInput.Y.Offset + delta.Y
-            )
-        end
-    end)
+        end,
+    })
 end
 
--- ✅ Button Creator
-local function createButton(text, url)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 0, 50)
-    btn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-    btn.BackgroundTransparency = 0.1
-    btn.BorderSizePixel = 0
-    btn.AutoButtonColor = false
-    btn.Parent = scrolling
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
+--// Pet Scripts
+createButton(PetsTab, "Rayfield Dark Spawner", "https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua")
+createButton(PetsTab, "Moon Cat Ability Range Changer", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/MoonCatChanger")
+createButton(PetsTab, "Pet Randomizer (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1")
+createButton(PetsTab, "Pet Weight Changer (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger")
 
-    local label = Instance.new("TextLabel", btn)
-    label.Size = UDim2.new(1, -20, 0, 24)
-    label.Position = UDim2.new(0, 10, 0, 4)
-    label.Text = text
-    label.Font = Enum.Font.GothamSemibold
-    label.TextSize = 16
-    label.TextColor3 = Color3.fromRGB(230, 230, 230)
-    label.BackgroundTransparency = 1
-    label.TextXAlignment = Enum.TextXAlignment.Left
+--// Script Hubs
+createButton(HubsTab, "Yawi Hub X (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa")
+createButton(HubsTab, "Project Reverse (Keyless)", "https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua")
+createButton(HubsTab, "Speed Hub X (Keyless)", "https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua")
+createButton(HubsTab, "Nat Hub Loader (Key)", "https://get.nathub.xyz/loader")
+createButton(HubsTab, "ThanHub (Keyless)", "https://raw.githubusercontent.com/thantzy/thanhub/refs/heads/main/thanv1")
+createButton(HubsTab, "Limit Hub (Key)", "https://raw.githubusercontent.com/FakeModz/LimitHub/refs/heads/main/LimitHub_Luarmor_E.lua")
+createButton(HubsTab, "ThunderZ Hub (Keyless)", "https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua")
 
-    local subtext = Instance.new("TextLabel", btn)
-    subtext.Size = UDim2.new(1, -20, 0, 18)
-    subtext.Position = UDim2.new(0, 10, 0, 26)
-    subtext.Text = "Click to Execute"
-    subtext.Font = Enum.Font.Gotham
-    subtext.TextSize = 13
-    subtext.TextColor3 = Color3.fromRGB(180, 180, 200)
-    subtext.BackgroundTransparency = 1
-    subtext.TextXAlignment = Enum.TextXAlignment.Left
+--// Utilities
+createButton(UtilsTab, "Duplicate Tag Remover (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover")
 
-    local glow = Instance.new("UIStroke", btn)
-    glow.Thickness = 2
-    glow.Transparency = 0.8
-    glow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    glow.Color = Color3.fromRGB(0, 0, 0)
-
-    btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = Color3.fromRGB(50,50,65)}):Play()
-        TweenService:Create(glow, TweenInfo.new(0.25), {Transparency = 0.4}):Play()
-    end)
-    btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = Color3.fromRGB(35,35,45)}):Play()
-        TweenService:Create(glow, TweenInfo.new(0.25), {Transparency = 0.8}):Play()
-    end)
-
-    spawn(function()
-        local hue = 0
-        while btn and btn.Parent do
-            hue = (hue + 0.003) % 1
-            glow.Color = Color3.fromHSV(hue, 0.7, 1)
-            RunService.RenderStepped:Wait()
-        end
-    end)
-
-    btn.MouseButton1Click:Connect(function()
-        pcall(function()
-            loadstring(game:HttpGet(url))()
-        end)
-    end)
-end
-
--- Buttons (No duplicates, Rayfield first)
-createButton("Rayfield Dark Spawner", "https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua")
-createButton("Moon Cat Ability Range Changer", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/MoonCatChanger")
-createButton("Project Reverse (Keyless)", "https://raw.githubusercontent.com/veryimportantrr/x/refs/heads/main/gag_visual.lua")
-createButton("Yawi Hub X (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/FullFeaturesObsa")
-createButton("Pet Randomizer (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/EGG%20DETECTOR1")
-createButton("Pet Weight Changer (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGarden/refs/heads/main/petsizechanger")
-createButton("Duplicate Tag Remover (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover")
-createButton("Speed Hub X (Keyless)", "https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua")
-createButton("Nat Hub Loader (Key)", "https://get.nathub.xyz/loader")
-createButton("ThanHub (KEYLESS)", "https://raw.githubusercontent.com/thantzy/thanhub/refs/heads/main/thanv1")
-createButton("Limit Hub (KEY)", "https://raw.githubusercontent.com/FakeModz/LimitHub/refs/heads/main/LimitHub_Luarmor_E.lua")
-createButton("ThunderZ Hub (KEYLESS)", "https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua")
+--// Footer Info
+Rayfield:Notify({
+    Title = "Loader Ready",
+    Content = "All scripts loaded into Rayfield UI with tabs!",
+    Duration = 6,
+})
