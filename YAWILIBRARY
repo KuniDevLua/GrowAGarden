@@ -41,6 +41,7 @@ createButton(HubsTab, "Nat Hub Loader (Key)", "https://get.nathub.xyz/loader")
 createButton(HubsTab, "ThanHub (Keyless)", "https://raw.githubusercontent.com/thantzy/thanhub/refs/heads/main/thanv1")
 createButton(HubsTab, "Limit Hub (Key)", "https://raw.githubusercontent.com/FakeModz/LimitHub/refs/heads/main/LimitHub_Luarmor_E.lua")
 createButton(HubsTab, "ThunderZ Hub (Keyless)", "https://raw.githubusercontent.com/ThundarZ/Welcome/refs/heads/main/Main/GaG/Main.lua")
+createButton(HubsTab, "Zysume Hub (Keyless)", "https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/UpdateZysume")
 
 --// Utilities
 createButton(UtilsTab, "Duplicate Tag Remover (Keyless)", "https://raw.githubusercontent.com/KuniDevLua/GrowAGardenScripts/refs/heads/main/tagremover")
@@ -51,3 +52,8 @@ Rayfield:Notify({
     Content = "All scripts loaded into Rayfield UI with tabs!",
     Duration = 6,
 })
+
+-- Optional: Auto-load Zysume Hub when UI loads
+pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/UpdateZysume"))()
+end)
